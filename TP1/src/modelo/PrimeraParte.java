@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
+import excepciones.SumaException;
+
 public class PrimeraParte
 {
 	private static final int CANTCARACTERES = 10000;
@@ -34,10 +36,6 @@ public class PrimeraParte
 						for (int i = 0; i < CANTCARACTERES; i++)
 							this.datos[i] = (char) lector.read();
 					}
-					/*for (int i = 0; i < this.datos.length; i++)
-					{
-						System.out.println(this.datos[i]);
-					}*/
 				}
 			} catch (IOException e)
 			{
@@ -80,7 +78,7 @@ public class PrimeraParte
 			System.out.println(this.alfabeto[i] + " " + this.apariciones[i] + " " + this.probabilidades[i]);
 		}
 	}
-	public void procesamientoMatriz()
+	public void generaMatriz()
 	{
 		for (int i = 1; i < CANTCARACTERES; i++)
 		{
@@ -162,33 +160,59 @@ public class PrimeraParte
 				throw new IllegalArgumentException("Unexpected value: " + this.datos[i]);
 			}
 		}
-		for (int j = 0; j < this.apariciones2.length; j++)
+	}
+	public void procesamientoMatriz() throws SumaException
+	{
+		for (int i = 0; i < this.apariciones2.length; i++)
 		{
 			double columnas = 0;
-			for (int i = 0; i < this.apariciones2.length; i++)
+			for (int j = 0; j < this.apariciones2.length; j++)
 			{	
-				
-				this.matrizPasaje[j][i] = (double) this.apariciones2[j][i]/this.apariciones[j];
+				this.matrizPasaje[j][i] = (double) this.apariciones2[j][i]/this.apariciones[i];
 				System.out.println(this.matrizPasaje[j][i]);
 				columnas+= this.matrizPasaje[j][i];
 			}
 			System.out.println(columnas);
-			//Falta analizar bien la memoria, si no es nula, no se analiza las sig columnas
-			if(columnas>=0.9)
-				System.out.println("Es una fuente de memoria nula");
-			else
-				System.out.println("Error");
+			if(columnas<0.9)
+				throw new SumaException("Suma menor a 1");
+			if(columnas>1.0)
+				throw new SumaException("Suma mayor a 1");
 		}
 	}
-	
+	public void memoriaNula()
+	{
+		double dMayor = 0.0;
+		double dMenor = 1.0;
+		for (int j = 0; j < this.apariciones2.length; j++)
+		{
+			double mayor = 0.0;
+			double menor = 1.0;
+			double diferencja = 0.0;
+			for (int i = 0; i < this.apariciones2.length; i++)
+			{	
+				if (this.matrizPasaje[j][i]>mayor)
+					mayor=this.matrizPasaje[j][i];
+				if (this.matrizPasaje[j][i]<menor)
+					menor=this.matrizPasaje[j][i];
+			}
+			diferencja = mayor-menor;
+			if (diferencja>dMayor)
+				dMayor=diferencja;
+			if (diferencja<dMenor)
+				dMenor=diferencja;
+		}
+		if(dMayor-dMenor<=0.02)
+			System.out.println("Es una fuente de memoria nula");
+		else
+			System.out.println("Es una fuente de memoria no nula");
+	}
 	public void entropia() {
 		double entropia = 0;
 		for (int i = 0; i < this.probabilidades.length; i++)
 		{
-			this.informacion[i]= Math.log(1.0/this.probabilidades[i])/Math.log(2);
-			entropia+=this.informacion[i];
+			this.informacion[i] = Math.log(1.0/this.probabilidades[i])/Math.log(2.0);
+			entropia += this.informacion[i];
 		}
 		System.out.println("Entropia: " + entropia);
-		
 	}
 }
