@@ -169,10 +169,10 @@ public class PrimeraParte
 			for (int j = 0; j < this.apariciones2.length; j++)
 			{	
 				this.matrizPasaje[j][i] = (double) this.apariciones2[j][i]/this.apariciones[i];
-				System.out.println(this.matrizPasaje[j][i]);
+				System.out.print(this.matrizPasaje[j][i]+" ");
 				columnas+= this.matrizPasaje[j][i];
 			}
-			System.out.println(columnas);
+			System.out.println("| "+columnas);
 			if(columnas<0.9)
 				throw new SumaException("Suma menor a 1");
 			if(columnas>1.0)
@@ -210,9 +210,14 @@ public class PrimeraParte
 		double entropia = 0;
 		for (int i = 0; i < this.probabilidades.length; i++)
 		{
-			this.informacion[i] = Math.log(1.0/this.probabilidades[i])/Math.log(2.0);
-			entropia += this.informacion[i];
+			this.informacion[i] =( Math.log(1.0/this.probabilidades[i])/Math.log(2.0));
+			entropia += this.probabilidades[i]*this.informacion[i];
 		}
 		System.out.println("Entropia: " + entropia);
 	}
+	
+
+	
+
+	
 }
