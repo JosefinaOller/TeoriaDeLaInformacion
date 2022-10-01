@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
@@ -81,35 +80,31 @@ public class SegundaParte {
 		for (String i : this.probabilidades.keySet()) {
 			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
 			entropia += this.probabilidades.get(i)*this.informacion.get(i);
-			System.out.println("Entropia: " +entropia);
 		}
-		System.out.println("Inforamcion: " + this.informacion.toString());
-		System.out.println("Entropia: " +entropia);
+		System.out.println("Inforamci\u00f3n: " + this.informacion.toString());
+		System.out.println("Entrop\u00eda: " +entropia);
 	
 	}
 	
-	public void kraft(){
-		
+	public double kraft(){
 		double desigualdad_de_kraft=0;
-		
-		for (String i : this.apariciones.keySet()) {
-			desigualdad_de_kraft +=Math.pow(CANTSIMBOLOSDIFERENTES,-(i.length())); 
-		}
+		for (String i : this.apariciones.keySet())
+			desigualdad_de_kraft +=Math.pow(CANTSIMBOLOSDIFERENTES,-(i.length()));
 		System.out.println("desigualdad de kraft: " + df.format(desigualdad_de_kraft));
-		if(desigualdad_de_kraft > 1)
-			System.out.println("No cumple la desigualdad de kraft, no es intantaneo");
+		return desigualdad_de_kraft;
+	}
+	
+	public void mcMillan(){
+		if(kraft() <= 1)
+			System.out.println("Cumple la desigualdad de kraft, ergo es instant\u00e1neo.");
 		else 
-			System.out.println("Cumple la desigualdad de kraft");
-		
+			System.out.println("No cumple la desigualdad de kraft, no es instant\u00e1neo.");
 	}
 	
 	public void longitudMedia() {
-		
 		double longitud_media=0;
-		for (String i : this.probabilidades.keySet()) {
+		for (String i : this.probabilidades.keySet())
 			longitud_media += this.probabilidades.get(i) * i.length();
-		}
 		System.out.println("longitud media: " + df.format(longitud_media));
 	}
-	
 }
