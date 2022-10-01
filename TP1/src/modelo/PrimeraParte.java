@@ -210,11 +210,13 @@ public class PrimeraParte
 		double entropia = 0;
 		for (int i = 0; i < this.probabilidades.length; i++)
 		{
-			this.informacion[i] =this.probabilidades[i]*( Math.log(1.0/this.probabilidades[i])/Math.log(2.0));
-			entropia += this.informacion[i];
+			this.informacion[i] =( Math.log(1.0/this.probabilidades[i])/Math.log(2.0));
+			entropia += this.probabilidades[i]*this.informacion[i];
 		}
 		System.out.println("Entropia: " + entropia);
 	}
+	
+
 	
 
 	
