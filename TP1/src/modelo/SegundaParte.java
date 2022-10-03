@@ -17,7 +17,8 @@ public class SegundaParte {
 	private HashMap<String, Double> probabilidades= new HashMap<String, Double>();
 	private HashMap<String, Double> informacion= new HashMap<String, Double>();
 	private int cantidadCodigos;
-	DecimalFormat df = new DecimalFormat("#.####");
+	private double longitud_media;
+	DecimalFormat df = new DecimalFormat("#.##");
 	
 	
 	public void leeArchivo()
@@ -75,15 +76,15 @@ public class SegundaParte {
 		
 	}
 	
-	public void entropia() {
+	public double entropia(int r) {
 		double entropia = 0;
 		for (String i : this.probabilidades.keySet()) {
-			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
+			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(r)));
 			entropia += this.probabilidades.get(i)*this.informacion.get(i);
 		}
 		System.out.println("Inforamci\u00f3n: " + this.informacion.toString());
 		System.out.println("Entrop\u00eda: " +entropia);
-	
+		return entropia;
 	}
 	
 	public double kraft(){
@@ -102,9 +103,26 @@ public class SegundaParte {
 	}
 	
 	public void longitudMedia() {
-		double longitud_media=0;
+		this.longitud_media=0;
 		for (String i : this.probabilidades.keySet())
 			longitud_media += this.probabilidades.get(i) * i.length();
+		this.longitud_media=this.redondeo(longitud_media);
 		System.out.println("longitud media: " + df.format(longitud_media));
 	}
+	
+	public void compacto() {
+		 
+		 double hentropia_h=this.entropia(CANTSIMBOLOSDIFERENTES);
+		 hentropia_h = this.redondeo(hentropia_h);
+		if(hentropia_h==this.longitud_media)
+			System.out.println("No es posible compactarlo más");
+		else if (hentropia_h<this.longitud_media)
+			System.out.println("se puede compactar a una logitud media de "+hentropia_h);
+		
+	}
+	
+	public double redondeo(double valor){
+		return  (Math.round(valor * 100.0) / 100.0);
+	}
+	
 }

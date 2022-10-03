@@ -28,9 +28,10 @@ public class Prueba
 		System.out.println("---------------------");
 		p2.leeArchivo();
 		p2.procesamiento(3);
-		p2.entropia();
+		p2.entropia(2);
 		p2.mcMillan();
 		p2.longitudMedia();
+		p2.compacto();
 	}
 
 }
