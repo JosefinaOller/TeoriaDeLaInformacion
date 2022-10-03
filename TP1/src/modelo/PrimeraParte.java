@@ -13,14 +13,13 @@ import excepciones.SumaException;
 public class PrimeraParte
 {
 	private static final int CANTCARACTERES = 10000;
-	private char datos[] = new char[CANTCARACTERES];//Manera 1
-	private char alfabeto[] = {'A','B','C'};//Manera 1
-	private double probabilidades[] = new double[3];//Manera 1
-	private double informacion[]= new double[3];
-	private double matrizPasaje[][] = new double[3][3];//Manera 1
-	private int apariciones[] = {0, 0, 0};//Manera 1
-	private int apariciones2[][] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};//Manera 1
-	private HashMap<Character, Double> probabilidades2= new HashMap<Character, Double>();//Manera 2
+	private char datos[] = new char[CANTCARACTERES];
+	private char alfabeto[] = {'A','B','C'};
+	private double matrizPasaje[][] = new double[3][3];
+	private int apariciones2[][] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+	private HashMap<Character, Integer> apariciones= new HashMap<Character, Integer>();
+	private HashMap<Character, Double> probabilidades= new HashMap<Character, Double>();
+	private HashMap<Character, Double> informacion= new HashMap<Character, Double>();
 	
 	public void leeArchivo()
 	{
@@ -51,32 +50,16 @@ public class PrimeraParte
 	{
 		for (int i = 0; i < CANTCARACTERES; i++)
 		{
-			switch (this.datos[i])
-			{
-			case 'A':
-			{
-				this.apariciones[0]++;
-				break;
-			}
-			case 'B':
-			{
-				this.apariciones[1]++;
-				break;
-			}
-			case 'C':
-			{
-				this.apariciones[2]++;
-				break;
-			}
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + this.datos[i]);
+			if(this.apariciones.containsKey(this.datos[i])){
+				this.apariciones.put(this.datos[i], this.apariciones.get(this.datos[i])+1);
+			}else {
+				this.apariciones.put(this.datos[i], 1);
 			}
 		}
-		for (int i = 0; i < this.apariciones.length; i++)
-		{
-			this.probabilidades[i] = (double) this.apariciones[i]/CANTCARACTERES;
-			System.out.println(this.alfabeto[i] + " " + this.apariciones[i] + " " + this.probabilidades[i]);
-		}
+		System.out.println("apariciones: " + this.apariciones.toString());
+		for (char i : this.apariciones.keySet())
+			this.probabilidades.put(i, (double) this.apariciones.get(i)/CANTCARACTERES);
+		System.out.println(this.probabilidades.toString());
 	}
 	public void generaMatriz()
 	{
@@ -168,7 +151,7 @@ public class PrimeraParte
 			double columnas = 0;
 			for (int j = 0; j < this.apariciones2.length; j++)
 			{	
-				this.matrizPasaje[j][i] = (double) this.apariciones2[j][i]/this.apariciones[i];
+				this.matrizPasaje[j][i] = (double) this.apariciones2[j][i]/this.apariciones.get(alfabeto[i]);
 				System.out.print(this.matrizPasaje[j][i]+" ");
 				columnas+= this.matrizPasaje[j][i];
 			}
@@ -208,16 +191,11 @@ public class PrimeraParte
 	}
 	public void entropia() {
 		double entropia = 0;
-		for (int i = 0; i < this.probabilidades.length; i++)
-		{
-			this.informacion[i] =( Math.log(1.0/this.probabilidades[i])/Math.log(2.0));
-			entropia += this.probabilidades[i]*this.informacion[i];
+		for (Character i : this.probabilidades.keySet()) {
+			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
+			entropia += this.probabilidades.get(i)*this.informacion.get(i);
 		}
-		System.out.println("Entropia: " + entropia);
+		System.out.println("Inforamci\u00f3n: " + this.informacion.toString());
+		System.out.println("Entrop\u00eda: " + entropia);
 	}
-	
-
-	
-
-	
 }
