@@ -1,11 +1,17 @@
 package modelo;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -106,5 +112,48 @@ public class SegundaParte {
 		for (String i : this.probabilidades.keySet())
 			longitud_media += this.probabilidades.get(i) * i.length();
 		System.out.println("longitud media: " + df.format(longitud_media));
+	}
+	public HashMap<String,Integer> orderMap(HashMap<String,Integer> map){
+        LinkedHashMap<String,Integer> descendingMap = new LinkedHashMap<>();
+           map.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+           .forEachOrdered(x -> descendingMap.put(x.getKey(), x.getValue()));
+        return descendingMap;
+    }
+
+	public HashMap<String,Double> orderMap2(HashMap<String,Double> map){
+        LinkedHashMap<String,Double> descendingMap = new LinkedHashMap<>();
+           map.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+           .forEachOrdered(x -> descendingMap.put(x.getKey(), x.getValue()));
+        return descendingMap;
+    }
+	
+	public void ordenacion(){
+		this.apariciones = orderMap(this.apariciones);
+		this.informacion = orderMap2(this.informacion);
+		this.probabilidades = orderMap2(this.probabilidades);
+        System.out.println(this.apariciones.toString());
+        System.out.println(this.informacion.toString());
+        System.out.println(this.probabilidades.toString());
+    }
+	public void huffman(){
+		  HashMap<String, Double> aux = new HashMap<String, Double>();
+    }
+	public void generaArchivoBinario()
+	{
+		File arch = new File("tp1_grupo1.bin");
+		try
+		{
+			if (arch.canWrite())
+			{
+				try (FileOutputStream salida = new FileOutputStream(arch))
+				{
+					ObjectOutputStream escribe = new ObjectOutputStream(salida);
+					//escribe.write();
+				}
+			}
+		} catch (IOException e)
+		{
+			JOptionPane.showMessageDialog(null, "Error de escritura de archivo");
+		}
 	}
 }
