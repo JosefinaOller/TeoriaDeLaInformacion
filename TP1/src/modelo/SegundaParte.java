@@ -1,11 +1,17 @@
 package modelo;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -17,8 +23,7 @@ public class SegundaParte {
 	private HashMap<String, Double> probabilidades= new HashMap<String, Double>();
 	private HashMap<String, Double> informacion= new HashMap<String, Double>();
 	private int cantidadCodigos;
-	private double longitud_media;
-	DecimalFormat df = new DecimalFormat("#.##");
+	DecimalFormat df = new DecimalFormat("#.####");
 	
 	
 	public void leeArchivo()
@@ -76,53 +81,82 @@ public class SegundaParte {
 		
 	}
 	
-	public double entropia(int r) {
+	public double entropia() {
 		double entropia = 0;
 		for (String i : this.probabilidades.keySet()) {
-			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(r)));
+			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
 			entropia += this.probabilidades.get(i)*this.informacion.get(i);
 		}
 		System.out.println("Inforamci\u00f3n: " + this.informacion.toString());
 		System.out.println("Entrop\u00eda: " +entropia);
 		return entropia;
+	
 	}
 	
 	public double kraft(){
 		double desigualdad_de_kraft=0;
 		for (String i : this.apariciones.keySet())
 			desigualdad_de_kraft +=Math.pow(CANTSIMBOLOSDIFERENTES,-(i.length()));
-		System.out.println("desigualdad de kraft: " + df.format(desigualdad_de_kraft));
+		System.out.println("Desigualdad de kraft: " + df.format(desigualdad_de_kraft));
 		return desigualdad_de_kraft;
 	}
 	
-	public void mcMillan(){
-		if(kraft() <= 1)
-			System.out.println("Cumple la desigualdad de kraft, ergo es instant\u00e1neo.");
+	public String mcMillan(){
+		double kraft = kraft();
+		if(kraft <= 1)
+			return df.format(kraft)+"/Cumple la desigualdad de kraft, ergo es instant\u00e1neo.";
 		else 
-			System.out.println("No cumple la desigualdad de kraft, no es instant\u00e1neo.");
+			return df.format(kraft)+"/No cumple la desigualdad de kraft, no es instant\u00e1neo.";
 	}
 	
-	public void longitudMedia() {
-		this.longitud_media=0;
+	public double longitudMedia() {
+		double longitud_media=0;
 		for (String i : this.probabilidades.keySet())
 			longitud_media += this.probabilidades.get(i) * i.length();
-		this.longitud_media=this.redondeo(longitud_media);
-		System.out.println("longitud media: " + df.format(longitud_media));
+		System.out.println("Longitud media: " + df.format(longitud_media));
+		return longitud_media;
 	}
+	public HashMap<String,Integer> orderMap(HashMap<String,Integer> map){
+        LinkedHashMap<String,Integer> descendingMap = new LinkedHashMap<>();
+           map.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+           .forEachOrdered(x -> descendingMap.put(x.getKey(), x.getValue()));
+        return descendingMap;
+    }
+
+	public HashMap<String,Double> orderMap2(HashMap<String,Double> map){
+        LinkedHashMap<String,Double> descendingMap = new LinkedHashMap<>();
+           map.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+           .forEachOrdered(x -> descendingMap.put(x.getKey(), x.getValue()));
+        return descendingMap;
+    }
 	
-	public void compacto() {
-		 
-		 double hentropia_h=this.entropia(CANTSIMBOLOSDIFERENTES);
-		 hentropia_h = this.redondeo(hentropia_h);
-		if(hentropia_h==this.longitud_media)
-			System.out.println("No es posible compactarlo más");
-		else if (hentropia_h<this.longitud_media)
-			System.out.println("se puede compactar a una logitud media de "+hentropia_h);
-		
+	public void ordenacion(){
+		this.apariciones = orderMap(this.apariciones);
+		this.informacion = orderMap2(this.informacion);
+		this.probabilidades = orderMap2(this.probabilidades);
+        System.out.println(this.apariciones.toString());
+        System.out.println(this.informacion.toString());
+        System.out.println(this.probabilidades.toString());
+    }
+	public void huffman(){
+		  HashMap<String, Double> aux = new HashMap<String, Double>();
+    }
+	public void generaArchivoBinario(String nombreArchivo)
+	{
+		File arch = new File(nombreArchivo);
+		try
+		{
+			if (arch.canWrite())
+			{
+				try (FileOutputStream salida = new FileOutputStream(arch))
+				{
+					ObjectOutputStream escribe = new ObjectOutputStream(salida);
+					//escribe.write();
+				}
+			}
+		} catch (IOException e)
+		{
+			JOptionPane.showMessageDialog(null, "Error de escritura de archivo");
+		}
 	}
-	
-	public double redondeo(double valor){
-		return  (Math.round(valor * 100.0) / 100.0);
-	}
-	
 }
