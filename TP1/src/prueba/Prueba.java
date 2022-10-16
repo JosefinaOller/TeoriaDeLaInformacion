@@ -45,6 +45,7 @@ public class Prueba
 			p2.mcMillan();
 			p2.longitudMedia();
 			p2.ordenacion();
+			//p2.generaArchivoBinario("3 Caracteres.bin");
 			break;
 		}
 		case 2:
@@ -57,6 +58,7 @@ public class Prueba
 			p25.mcMillan();
 			p25.longitudMedia();
 			p25.ordenacion();
+			//p25.generaArchivoBinario("5 Caracteres.bin");
 			break;
 		}
 		case 3:
@@ -68,6 +70,7 @@ public class Prueba
 			p27.mcMillan();
 			p27.longitudMedia();
 			p27.ordenacion();
+			//p27.generaArchivoBinario("7 Caracteres.bin");
 			break;
 		default:
 			break;

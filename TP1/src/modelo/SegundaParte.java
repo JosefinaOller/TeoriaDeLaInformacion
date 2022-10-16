@@ -138,9 +138,9 @@ public class SegundaParte {
 	public void huffman(){
 		  HashMap<String, Double> aux = new HashMap<String, Double>();
     }
-	public void generaArchivoBinario()
+	public void generaArchivoBinario(String nombreArchivo)
 	{
-		File arch = new File("tp1_grupo1.bin");
+		File arch = new File(nombreArchivo);
 		try
 		{
 			if (arch.canWrite())

@@ -13,14 +13,14 @@ import excepciones.SumaException;
 public class PrimeraParte
 {
 	private static final int CANTCARACTERES = 10000;
+	private static final int N = 3; /*Cantidad de simbolos*/
 	private char datos[] = new char[CANTCARACTERES];
 	private char alfabeto[] = {'A','B','C'};
-	private double matrizPasaje[][] = new double[3][3];
+	private double matrizPasaje[][] = new double[N][N];
 	private int apariciones2[][] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 	private HashMap<Character, Integer> apariciones= new HashMap<Character, Integer>();
 	private HashMap<Character, Double> probabilidades= new HashMap<Character, Double>();
 	private HashMap<Character, Double> informacion= new HashMap<Character, Double>();
-	private static Integer N = 3; /*Cantidad de simbolos*/
 	public void leeArchivo()
 	{
 		try
@@ -185,9 +185,9 @@ public class PrimeraParte
 				dMenor=diferencia;
 		}
 		if(dMayor-dMenor<=0.02)
-			System.out.println("Es una fuente de memoria nula");
+			JOptionPane.showMessageDialog(null, "Es una fuente de memoria nula");
 		else
-			System.out.println("Es una fuente de memoria no nula");
+			JOptionPane.showMessageDialog(null, "Es una fuente de memoria no nula");
 	}
 	public void entropia() {
 		double entropia = 0;
@@ -195,10 +195,8 @@ public class PrimeraParte
 			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
 			entropia += this.probabilidades.get(i)*this.informacion.get(i);
 		}
-		System.out.println("Inforamci\u00f3n: " + this.informacion.toString());
-		System.out.println("Entrop\u00eda inicial : " + entropia);
-		System.out.println("Entrop\u00eda de orden 20: " + extension());
-		
+		System.out.println("Informaci\u00f3n: " + this.informacion.toString());
+		JOptionPane.showMessageDialog(null, "Entrop\u00eda inicial : " + entropia + "\nEntrop\u00eda de orden 20: " + extension());
 	}
 	
 	public double extension() {
