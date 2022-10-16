@@ -191,10 +191,12 @@ public class PrimeraParte
 	}
 	public void entropia() {
 		double entropia = 0;
+		System.out.println("a");
 		for (Character i : this.probabilidades.keySet()) {
 			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
 			entropia += this.probabilidades.get(i)*this.informacion.get(i);
 		}
+		System.out.println("b");
 		System.out.println("Informaci\u00f3n: " + this.informacion.toString());
 		JOptionPane.showMessageDialog(null, "Entrop\u00eda inicial : " + entropia + "\nEntrop\u00eda de orden 20: " + extension());
 	}

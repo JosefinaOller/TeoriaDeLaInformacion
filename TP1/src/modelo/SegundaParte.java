@@ -81,7 +81,7 @@ public class SegundaParte {
 		
 	}
 	
-	public void entropia() {
+	public double entropia() {
 		double entropia = 0;
 		for (String i : this.probabilidades.keySet()) {
 			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
@@ -89,6 +89,7 @@ public class SegundaParte {
 		}
 		System.out.println("Inforamci\u00f3n: " + this.informacion.toString());
 		System.out.println("Entrop\u00eda: " +entropia);
+		return entropia;
 	
 	}
 	
@@ -100,18 +101,20 @@ public class SegundaParte {
 		return desigualdad_de_kraft;
 	}
 	
-	public void mcMillan(){
-		if(kraft() <= 1)
-			System.out.println("Cumple la desigualdad de kraft, ergo es instant\u00e1neo.");
+	public String mcMillan(){
+		double kraft = kraft();
+		if(kraft <= 1)
+			return df.format(kraft)+"/Cumple la desigualdad de kraft, ergo es instant\u00e1neo.";
 		else 
-			System.out.println("No cumple la desigualdad de kraft, no es instant\u00e1neo.");
+			return df.format(kraft)+"/No cumple la desigualdad de kraft, no es instant\u00e1neo.";
 	}
 	
-	public void longitudMedia() {
+	public double longitudMedia() {
 		double longitud_media=0;
 		for (String i : this.probabilidades.keySet())
 			longitud_media += this.probabilidades.get(i) * i.length();
 		System.out.println("Longitud media: " + df.format(longitud_media));
+		return longitud_media;
 	}
 	public HashMap<String,Integer> orderMap(HashMap<String,Integer> map){
         LinkedHashMap<String,Integer> descendingMap = new LinkedHashMap<>();
