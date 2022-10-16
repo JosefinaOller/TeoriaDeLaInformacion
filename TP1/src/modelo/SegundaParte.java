@@ -96,7 +96,7 @@ public class SegundaParte {
 		double desigualdad_de_kraft=0;
 		for (String i : this.apariciones.keySet())
 			desigualdad_de_kraft +=Math.pow(CANTSIMBOLOSDIFERENTES,-(i.length()));
-		System.out.println("desigualdad de kraft: " + df.format(desigualdad_de_kraft));
+		System.out.println("Desigualdad de kraft: " + df.format(desigualdad_de_kraft));
 		return desigualdad_de_kraft;
 	}
 	
@@ -111,7 +111,7 @@ public class SegundaParte {
 		double longitud_media=0;
 		for (String i : this.probabilidades.keySet())
 			longitud_media += this.probabilidades.get(i) * i.length();
-		System.out.println("longitud media: " + df.format(longitud_media));
+		System.out.println("Longitud media: " + df.format(longitud_media));
 	}
 	public HashMap<String,Integer> orderMap(HashMap<String,Integer> map){
         LinkedHashMap<String,Integer> descendingMap = new LinkedHashMap<>();
