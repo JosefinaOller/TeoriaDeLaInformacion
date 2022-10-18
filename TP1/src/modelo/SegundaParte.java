@@ -178,8 +178,28 @@ public class SegundaParte {
 					aux2.remove(aux2.get(0));
 				else
 					aux2.remove(aux2.size()-(2+l));
-			System.out.println(aux2.toString());
+			System.out.println(aux2.get(0).toString());
 		}
+		recorrido(aux2.get(0));
+		System.out.println("Raiz del arbol" + aux2.get(0).toString());
+    }
+	public void recorrido(NodoArbol arbol){
+		if (!arbol.equals(null))
+			if (arbol.getIzquierda()!=null)
+			{
+				if (arbol.getIzquierda().getCodigo()==null)
+					arbol.getIzquierda().setCodigo("0");
+				else
+					arbol.getIzquierda().setCodigo(arbol.getIzquierda().getCodigo()+"0");
+				recorrido(arbol.getIzquierda());
+			}else if (arbol.getDerecha()!=null)
+			{
+				if (arbol.getDerecha().getCodigo()==null)
+					arbol.getDerecha().setCodigo("1");
+				else
+					arbol.getDerecha().setCodigo(arbol.getDerecha().getCodigo()+"1");
+				recorrido(arbol.getDerecha());
+			}
     }
 	public void generaArchivoBinario(String nombreArchivo)
 	{

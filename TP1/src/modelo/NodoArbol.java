@@ -6,6 +6,7 @@ public class NodoArbol
 	private double probabilidad;
 	private NodoArbol izquierda;
 	private NodoArbol derecha;
+	private String codigo;
 	
 	public NodoArbol(String clave, double probabilidad, NodoArbol izquierda, NodoArbol derecha)
 	{
@@ -14,6 +15,7 @@ public class NodoArbol
 		this.probabilidad = probabilidad;
 		this.izquierda = izquierda;
 		this.derecha = derecha;
+		this.codigo = null;
 	}
 	
 	public String getClave()
@@ -49,11 +51,17 @@ public class NodoArbol
 		this.derecha = derecha;
 	}
 
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
 	@Override
-	public String toString()
-	{
-		return "[" + clave + ", " + probabilidad + ", " + izquierda
+	public String toString() {
+		return "[" + clave + ", " + probabilidad +  ", " + codigo + ", " + izquierda
 				+ ", " + derecha + "]";
 	}
-	
 }
