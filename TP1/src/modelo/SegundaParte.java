@@ -164,41 +164,41 @@ public class SegundaParte {
 			aux.add(new NodoArbol(list.get(i).getKey(),list.get(i).getValue(),null,null));
 			aux2.add(new NodoArbol(list.get(i).getKey(),list.get(i).getValue(),null,null));
 		}
-		
 		while (aux2.size()!=1)
 		{
-			int l=0;
-			int i=aux2.size()-2;
-			int j=aux2.size()-1;
-			while (i>=0 && j>=0 && aux2.get(i).getProbabilidad()<aux2.get(j).getProbabilidad())
+			int i = 0;
+			int j = 1;
+			double min1=1;
+			double min2=1;
+			for (int k = 0; k < aux2.size(); k++)
 			{
-				i--;
-				j--;
-				l++;
-			}
-			if (i<0)
-			{
-				i = 0;
-				j = 1;
-				while (i>=aux2.size() && j>=aux2.size() && aux2.get(i).getProbabilidad()<aux2.get(j).getProbabilidad())
+				if (aux2.get(k).getProbabilidad()<min1)
 				{
-					i++;
-					j++;
-					l--;
+					min2 = min1;
+					j = i;
+					min1 = aux2.get(k).getProbabilidad();
+					i = k;
+				} else if (aux2.get(k).getProbabilidad()<min2) {
+					min2 = aux2.get(k).getProbabilidad();
+					j = k;
 				}
 			}
 			aux2.add(new NodoArbol(aux2.get(i).getClave()+aux2.get(j).getClave(), aux2.get(i).getProbabilidad()+aux2.get(j).getProbabilidad(), aux2.get(i), aux2.get(j)));
-			for (int k = 0; k < 2; k++)
-				if (2+l > aux2.size())
-					aux2.remove(aux2.get(0));
-				else
-					aux2.remove(aux2.size()-(2+l));
+			if (i < j)
+			{
+				aux2.remove(aux2.get(j));
+				aux2.remove(aux2.get(i));
+			} else
+			{
+				aux2.remove(aux2.get(i));
+				aux2.remove(aux2.get(j));
+			}
 		}
 		recorrido(aux2.get(0));
 		System.out.println("Codigos de cada simbolo\n" + this.codigos.toString());
 		System.out.println("La codificacion Huffman es:" + codificacion(cantCaracteresCodigo));
-		
-    }
+	}
+
 	private void recorrido(NodoArbol arbol){
 		if (!arbol.equals(null)){
 			if (arbol.getIzquierda()!=null)
@@ -232,50 +232,40 @@ public class SegundaParte {
 				i++;
 			}
 			codificacion += this.codigos.get(aux);
-			
 		}
 		generaArchivoBinario("Codificacion"+cantCaracteresCodigo+"Caracteres.bin",codificacion);
 		return codificacion;
-		
     }
 	
 	public void generaArchivoBinario(String nombreArchivo,String codificacion)
 	{
-		 ObjectOutputStream salida = null;
+		ObjectOutputStream salida = null;
 		try {
 			salida = new ObjectOutputStream(new FileOutputStream(nombreArchivo));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}  catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Error de escritura de archivo");
 		}
-	     try {
-			salida.writeObject(codificacion);
+	    try {
+	    	byte bajt[] = new byte[codificacion.length()/8+1];
+	    	for (int i = 0; i < datos.length; i+=8)
+			{
+				String aux = "";
+				for (int j = 0; j < 8; j++)
+				{
+					if (i + j < codificacion.length())
+						aux += codificacion.charAt(i+j);
+				}
+				if (!aux.isEmpty())
+					bajt[i/8] = (byte) Integer.parseInt(aux);
+			}
+			salida.writeObject(bajt);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error de escritura de archivo");
 		}
-	     try {
+	    try {
 			salida.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//No me anduvo,BORRAR
-		/*File arch = new File(nombreArchivo);
-		try
-		{
-			if (arch.canWrite())
-			{
-				try (FileOutputStream salida = new FileOutputStream(arch))
-				{
-					ObjectOutputStream escribe = new ObjectOutputStream(salida);
-					escribe.writeObject(codificacion);
-					escribe.close();
-				}
-			}
-		} catch (IOException e)
-		{
 			JOptionPane.showMessageDialog(null, "Error de escritura de archivo");
-		}*/ 
+		}
 	}
 }
