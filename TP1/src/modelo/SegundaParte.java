@@ -12,14 +12,17 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
 public class SegundaParte {
-	private static final int CANTCARACTERES = 10000;
+	private static final int CANTCARACTERES = 1000;
 	private static final int CANTSIMBOLOSDIFERENTES = 3;
 	private char datos[] = new char[CANTCARACTERES];
+	private int cantCaracteresCodigo;
 	private HashMap<String, Integer> apariciones= new HashMap<String, Integer>();
 	private HashMap<String, Double> probabilidades= new HashMap<String, Double>();
 	private HashMap<String, Double> informacion= new HashMap<String, Double>();
@@ -53,7 +56,8 @@ public class SegundaParte {
 		}
 	}
 	
-	public void procesamiento(int cantCaracteresCodigo){
+	public void procesamiento(int cant){
+		this.cantCaracteresCodigo = cant;
 		this.cantidadCodigos=(int) (CANTCARACTERES/cantCaracteresCodigo);//el casteo int hace redondeo asi abajo
 		for (int i = 0; i < CANTCARACTERES; i+=cantCaracteresCodigo) {
 			String palabra="";
@@ -142,14 +146,14 @@ public class SegundaParte {
 	public void huffman(){
 		ArrayList<NodoArbol> aux = new ArrayList<NodoArbol>();
 		ArrayList<NodoArbol> aux2 = new ArrayList<NodoArbol>();
-		for (Map.Entry<String, Double> entry : this.probabilidades.entrySet())
-		{
-			String key = entry.getKey();
-			Double val = entry.getValue();
-			aux.add(new NodoArbol(key, val, null, null));
-			aux2.add(new NodoArbol(key, val, null, null));
+		//Genero una lista de probabilidades y la ordeno
+		List <Entry<String,Double>> list = new ArrayList<>(probabilidades.entrySet());
+		list.sort(Entry.comparingByValue());
+		for(int i=0;i<list.size();i++) {
+			aux.add(new NodoArbol(list.get(i).getKey(),list.get(i).getValue(),null,null));
+			aux2.add(new NodoArbol(list.get(i).getKey(),list.get(i).getValue(),null,null));
 		}
-		//System.out.println(aux.toString());
+		
 		while (aux2.size()!=1)
 		{
 			int l=0;
@@ -178,12 +182,11 @@ public class SegundaParte {
 					aux2.remove(aux2.get(0));
 				else
 					aux2.remove(aux2.size()-(2+l));
-			//System.out.println(aux2.get(0).toString());
 		}
 		recorrido(aux2.get(0));
-		//System.out.println("Raiz del arbol" + aux2.get(0).toString());
-		System.out.println(this.codigos.toString());
-		codificacion(3);
+		System.out.println("Codigos de cada simbolo\n" + this.codigos.toString());
+		System.out.println("La codificacion Huffman es:" + codificacion(cantCaracteresCodigo));
+		
     }
 	private void recorrido(NodoArbol arbol){
 		if (!arbol.equals(null)){
@@ -206,21 +209,44 @@ public class SegundaParte {
 				this.codigos.put(arbol.getClave(), arbol.getCodigo());
 		}
     }
-	private String codificacion(int cantCaracteresCodigo){
-		String aux = "";
-		this.cantidadCodigos=(int) (CANTCARACTERES/cantCaracteresCodigo);//el casteo int hace redondeo asi abajo
-		for (int i = 0; i < CANTCARACTERES; i+=cantCaracteresCodigo) {
-			//String key = "";
-			if (i+1 < CANTCARACTERES && i+2 < CANTCARACTERES) {
-				aux += this.codigos.get(this.datos[i] + this.datos[i+1] + this.datos[i+2]);
+	
+	private String codificacion(int cant){
+		String codificacion = "";
+		//this.cantidadCodigos=(int) (CANTCARACTERES/cant);//el casteo int hace redondeo asi abajo
+		for (int i = 0; i < CANTCARACTERES; i+=cant) {
+			String aux = "";
+			for(int j=0;j<cant;j++) {
+				aux += this.datos[i];
 			}
+			codificacion += this.codigos.get(aux);	
 		}
-		System.out.println(aux);
-		return aux;
+		generaArchivoBinario("Codificacion"+cantCaracteresCodigo+"Caracteres.bin",codificacion);
+		return codificacion;
     }
-	public void generaArchivoBinario(String nombreArchivo)
+	
+	public void generaArchivoBinario(String nombreArchivo,String codificacion)
 	{
-		File arch = new File(nombreArchivo);
+		 ObjectOutputStream salida = null;
+		try {
+			salida = new ObjectOutputStream(new FileOutputStream(nombreArchivo));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	     try {
+			salida.writeObject(codificacion);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	     try {
+			salida.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//No me anduvo,BORRAR
+		/*File arch = new File(nombreArchivo);
 		try
 		{
 			if (arch.canWrite())
@@ -228,12 +254,13 @@ public class SegundaParte {
 				try (FileOutputStream salida = new FileOutputStream(arch))
 				{
 					ObjectOutputStream escribe = new ObjectOutputStream(salida);
-					//escribe.write();
+					escribe.writeObject(codificacion);
+					escribe.close();
 				}
 			}
 		} catch (IOException e)
 		{
 			JOptionPane.showMessageDialog(null, "Error de escritura de archivo");
-		}
+		}*/ 
 	}
 }
