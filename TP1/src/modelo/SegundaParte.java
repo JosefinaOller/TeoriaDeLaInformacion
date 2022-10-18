@@ -23,9 +23,9 @@ public class SegundaParte {
 	private HashMap<String, Integer> apariciones= new HashMap<String, Integer>();
 	private HashMap<String, Double> probabilidades= new HashMap<String, Double>();
 	private HashMap<String, Double> informacion= new HashMap<String, Double>();
+	private HashMap<String, String> codigos= new HashMap<String, String>();
 	private int cantidadCodigos;
 	DecimalFormat df = new DecimalFormat("#.####");
-	
 	
 	public void leeArchivo()
 	{
@@ -85,7 +85,7 @@ public class SegundaParte {
 	public double entropia() {
 		double entropia = 0;
 		for (String i : this.probabilidades.keySet()) {
-			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
+			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(CANTSIMBOLOSDIFERENTES)));
 			entropia += this.probabilidades.get(i)*this.informacion.get(i);
 		}
 		System.out.println("Inforamci\u00f3n: " + this.informacion.toString());
@@ -149,7 +149,7 @@ public class SegundaParte {
 			aux.add(new NodoArbol(key, val, null, null));
 			aux2.add(new NodoArbol(key, val, null, null));
 		}
-		System.out.println(aux.toString());
+		//System.out.println(aux.toString());
 		while (aux2.size()!=1)
 		{
 			int l=0;
@@ -178,28 +178,45 @@ public class SegundaParte {
 					aux2.remove(aux2.get(0));
 				else
 					aux2.remove(aux2.size()-(2+l));
-			System.out.println(aux2.get(0).toString());
+			//System.out.println(aux2.get(0).toString());
 		}
 		recorrido(aux2.get(0));
-		System.out.println("Raiz del arbol" + aux2.get(0).toString());
+		//System.out.println("Raiz del arbol" + aux2.get(0).toString());
+		System.out.println(this.codigos.toString());
+		codificacion(3);
     }
-	public void recorrido(NodoArbol arbol){
-		if (!arbol.equals(null))
+	private void recorrido(NodoArbol arbol){
+		if (!arbol.equals(null)){
 			if (arbol.getIzquierda()!=null)
 			{
-				if (arbol.getIzquierda().getCodigo()==null)
+				if (arbol.getCodigo()==null)
 					arbol.getIzquierda().setCodigo("0");
 				else
-					arbol.getIzquierda().setCodigo(arbol.getIzquierda().getCodigo()+"0");
+					arbol.getIzquierda().setCodigo(arbol.getCodigo()+"0");
 				recorrido(arbol.getIzquierda());
-			}else if (arbol.getDerecha()!=null)
+			}if (arbol.getDerecha()!=null)
 			{
-				if (arbol.getDerecha().getCodigo()==null)
+				if (arbol.getCodigo()==null)
 					arbol.getDerecha().setCodigo("1");
 				else
-					arbol.getDerecha().setCodigo(arbol.getDerecha().getCodigo()+"1");
+					arbol.getDerecha().setCodigo(arbol.getCodigo()+"1");
 				recorrido(arbol.getDerecha());
 			}
+			if (arbol.getIzquierda()==null && arbol.getDerecha()==null)
+				this.codigos.put(arbol.getClave(), arbol.getCodigo());
+		}
+    }
+	private String codificacion(int cantCaracteresCodigo){
+		String aux = "";
+		this.cantidadCodigos=(int) (CANTCARACTERES/cantCaracteresCodigo);//el casteo int hace redondeo asi abajo
+		for (int i = 0; i < CANTCARACTERES; i+=cantCaracteresCodigo) {
+			//String key = "";
+			if (i+1 < CANTCARACTERES && i+2 < CANTCARACTERES) {
+				aux += this.codigos.get(this.datos[i] + this.datos[i+1] + this.datos[i+2]);
+			}
+		}
+		System.out.println(aux);
+		return aux;
     }
 	public void generaArchivoBinario(String nombreArchivo)
 	{
