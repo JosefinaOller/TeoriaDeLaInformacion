@@ -50,6 +50,7 @@ public class Prueba
 			kraft= p2.mcMillan().split("/");
 			longitudMedia=p2.longitudMedia();
 			p2.ordenacion();
+			p2.huffman();
 			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"</p>", 170, 170));
 			//p2.generaArchivoBinario("3 Caracteres.bin");
 			break;

@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -139,7 +140,46 @@ public class SegundaParte {
         System.out.println(this.probabilidades.toString());
     }
 	public void huffman(){
-		  HashMap<String, Double> aux = new HashMap<String, Double>();
+		ArrayList<NodoArbol> aux = new ArrayList<NodoArbol>();
+		ArrayList<NodoArbol> aux2 = new ArrayList<NodoArbol>();
+		for (Map.Entry<String, Double> entry : this.probabilidades.entrySet())
+		{
+			String key = entry.getKey();
+			Double val = entry.getValue();
+			aux.add(new NodoArbol(key, val, null, null));
+			aux2.add(new NodoArbol(key, val, null, null));
+		}
+		System.out.println(aux.toString());
+		while (aux2.size()!=1)
+		{
+			int l=0;
+			int i=aux2.size()-2;
+			int j=aux2.size()-1;
+			while (i>=0 && j>=0 && aux2.get(i).getProbabilidad()<aux2.get(j).getProbabilidad())
+			{
+				i--;
+				j--;
+				l++;
+			}
+			if (i<0)
+			{
+				i = 0;
+				j = 1;
+				while (i>=aux2.size() && j>=aux2.size() && aux2.get(i).getProbabilidad()<aux2.get(j).getProbabilidad())
+				{
+					i++;
+					j++;
+					l--;
+				}
+			}
+			aux2.add(new NodoArbol(aux2.get(i).getClave()+aux2.get(j).getClave(), aux2.get(i).getProbabilidad()+aux2.get(j).getProbabilidad(), aux2.get(i), aux2.get(j)));
+			for (int k = 0; k < 2; k++)
+				if (2+l > aux2.size())
+					aux2.remove(aux2.get(0));
+				else
+					aux2.remove(aux2.size()-(2+l));
+			System.out.println(aux2.toString());
+		}
     }
 	public void generaArchivoBinario(String nombreArchivo)
 	{
