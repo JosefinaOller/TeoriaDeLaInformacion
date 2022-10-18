@@ -12,6 +12,7 @@ public class Prueba
 {
 	static double entropia,longitudMedia,rendimiento,redundancia;
 	static String[] kraft = {};
+	static String compacto;
 	static DecimalFormat df = new DecimalFormat("#.####");
 	
 	public static void main(String[] args)
@@ -49,11 +50,12 @@ public class Prueba
 			entropia=p2.entropia();
 			kraft= p2.mcMillan().split("/");
 			longitudMedia=p2.longitudMedia();
+			compacto=p2.compacto();
 			rendimiento = entropia/longitudMedia;
 			redundancia = 1 - rendimiento;
 			p2.ordenacion();
 			p2.huffman();
-			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));
+			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"<p>"+compacto+"</p>"+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));
 			//p2.generaArchivoBinario("3 Caracteres.bin");
 			break;
 		}
@@ -66,12 +68,13 @@ public class Prueba
 			entropia=p25.entropia();
 			kraft= p25.mcMillan().split("/");
 			longitudMedia=p25.longitudMedia();
+			compacto=p25.compacto();
 			rendimiento = entropia/longitudMedia;
 			redundancia = 1 - rendimiento;
 			p25.ordenacion();
 			p25.huffman();
-			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));
-			//p25.ordenacion();
+			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"<p>"+compacto+"</p>"+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));			
+			p25.ordenacion();
 			//p25.generaArchivoBinario("5 Caracteres.bin");
 			break;
 		}
@@ -83,12 +86,13 @@ public class Prueba
 			entropia=p27.entropia();
 			kraft= p27.mcMillan().split("/");
 			longitudMedia=p27.longitudMedia();
+			compacto=p27.compacto();
 			rendimiento = entropia/longitudMedia;
 			redundancia = 1 - rendimiento;
 			p27.ordenacion();
 			p27.huffman();
-			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));
-			//p27.ordenacion();
+			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"<p>"+compacto+"</p>"+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));
+			p27.ordenacion();
 			//p27.generaArchivoBinario("7 Caracteres.bin");
 			break;
 		default:
