@@ -1,7 +1,6 @@
 package modelo;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -109,7 +109,7 @@ public class SegundaParte {
 	public String mcMillan(){
 		double kraft = kraft();
 		if(kraft <= 1)
-			return df.format(kraft)+"/Cumple la desigualdad de kraft, ergo es instant\u00e1neo.";
+			return df.format(kraft)+"/Cumple la desigualdad de kraft, por lo tanto es instant\u00e1neo.";
 		else 
 			return df.format(kraft)+"/No cumple la desigualdad de kraft, no es instant\u00e1neo.";
 	}
@@ -212,16 +212,20 @@ public class SegundaParte {
 	
 	private String codificacion(int cant){
 		String codificacion = "";
-		//this.cantidadCodigos=(int) (CANTCARACTERES/cant);//el casteo int hace redondeo asi abajo
-		for (int i = 0; i < CANTCARACTERES; i+=cant) {
-			String aux = "";
+		int i=0;
+		this.cantidadCodigos=(int) (CANTCARACTERES/cant);//el casteo int hace redondeo asi abajo
+		while (i<this.cantidadCodigos) {
+			String aux="";
 			for(int j=0;j<cant;j++) {
 				aux += this.datos[i];
+				i++;
 			}
-			codificacion += this.codigos.get(aux);	
+			codificacion += this.codigos.get(aux);
+			
 		}
 		generaArchivoBinario("Codificacion"+cantCaracteresCodigo+"Caracteres.bin",codificacion);
 		return codificacion;
+		
     }
 	
 	public void generaArchivoBinario(String nombreArchivo,String codificacion)
