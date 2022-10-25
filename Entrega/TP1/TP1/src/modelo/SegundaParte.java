@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import javax.swing.JOptionPane;
 
 public class SegundaParte {
-	private static final int CANTCARACTERES = 1000;
+	private static final int CANTCARACTERES = 10000;
 	private static final int CANTSIMBOLOSDIFERENTES = 3;
 	private char datos[] = new char[CANTCARACTERES];
 	private int cantCaracteresCodigo;
@@ -115,22 +115,16 @@ public class SegundaParte {
 			return df.format(kraft)+"/No cumple la desigualdad de kraft, no es instant\u00e1neo.";
 	}
 	
-	public double longitudMedia() {
+	/*public double longitudMedia() {
 		this.longitud_media=0;
 		for (String i : this.probabilidades.keySet())
 			longitud_media += this.probabilidades.get(i) * i.length();
 		System.out.println("Longitud media: " + df.format(longitud_media));
 		return longitud_media;
-	}
+	}*/
 	
-	public String compacto() {
-		int techoEntropia = (int)(Math.ceil(this.entropia));
-                if(techoEntropia == this.longitud_media) {
-			return "Es compacto, no se puede compactar m\u00e1s";
-		}
-		else {
-			return "No es compacto, se puede compactar a una longitud de "+ techoEntropia;
-		}
+	public void compacto() {
+		
 	}
 	public HashMap<String,Integer> orderMap(HashMap<String,Integer> map){
         LinkedHashMap<String,Integer> descendingMap = new LinkedHashMap<>();
