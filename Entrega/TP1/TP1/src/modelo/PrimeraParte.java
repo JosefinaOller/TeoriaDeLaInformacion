@@ -193,7 +193,7 @@ public class PrimeraParte
 		double entropia = 0;
 		System.out.println("a");
 		for (Character i : this.probabilidades.keySet()) {
-			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(2.0)));
+			this.informacion.put(i, (Math.log(1.0/this.probabilidades.get(i))/Math.log(3.0)));
 			entropia += this.probabilidades.get(i)*this.informacion.get(i);
 		}
 		System.out.println("b");
@@ -246,7 +246,7 @@ public class PrimeraParte
 																					for(int i20=0; i20<N; i20++) 
 																					{
 																						probabilidad=Prob[i1]*Prob[i2]*Prob[i3]*Prob[i4]*Prob[i5]*Prob[i6]*Prob[i7]*Prob[i8]*Prob[i9]*Prob[i10]*Prob[i11]*Prob[i12]*Prob[i13]*Prob[i14]*Prob[i15]*Prob[i16]*Prob[i17]*Prob[i18]*Prob[i19]*Prob[i20];
-																	                    entropia=entropia + probabilidad * (Math.log(1.0/probabilidad)/Math.log(2.0));
+																	                    entropia=entropia + probabilidad * (Math.log(1.0/probabilidad)/Math.log(3.0));
 																	             
 																					} /*i20*/
 																				} /*i19*/
