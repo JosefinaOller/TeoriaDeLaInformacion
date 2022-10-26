@@ -23,7 +23,6 @@ public class SegundaParte {
 	private char datos[] = new char[CANTCARACTERES];
 	private int cantCaracteresCodigo;
 	private double entropia;
-	private double longitud_media;
 	private HashMap<String, Integer> apariciones= new HashMap<String, Integer>();
 	private HashMap<String, Double> probabilidades= new HashMap<String, Double>();
 	private HashMap<String, Double> informacion= new HashMap<String, Double>();
@@ -115,15 +114,20 @@ public class SegundaParte {
 			return df.format(kraft)+"/No cumple la desigualdad de kraft, no es instant\u00e1neo.";
 	}
 	
-	/*public double longitudMedia() {
-		this.longitud_media=0;
-		for (String i : this.probabilidades.keySet())
-			longitud_media += this.probabilidades.get(i) * i.length();
-		System.out.println("Longitud media: " + df.format(longitud_media));
-		return longitud_media;
-	}*/
-	
-	public void compacto() {
+	public String compacto(int cantCaracteres) { 
+		System.out.println("Cantidad de combinaciones =" + Math.pow(3.0, cantCaracteres));
+		System.out.println("Cantidad de probabilidades =" + this.probabilidades.size());
+		if(Math.pow(3.0, cantCaracteres) == this.probabilidades.size()) {
+			double suma =0; //Para que sean equiprobables, tiene que ser igual a 1. 
+			for (String i : this.probabilidades.keySet())
+				suma+=this.probabilidades.get(i);
+			if(suma==1)
+				return "El codigo es compacto.";
+			else
+				return "El codigo no es compacto.";
+		}
+		else
+			return "El codigo no es compacto.";
 		
 	}
 	public HashMap<String,Integer> orderMap(HashMap<String,Integer> map){
