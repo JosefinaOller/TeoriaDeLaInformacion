@@ -115,8 +115,6 @@ public class SegundaParte {
 	}
 	
 	public String compacto(int cantCaracteres) { 
-		System.out.println("Cantidad de combinaciones =" + Math.pow(3.0, cantCaracteres));
-		System.out.println("Cantidad de probabilidades =" + this.probabilidades.size());
 		if(Math.pow(3.0, cantCaracteres) == this.probabilidades.size()) {
 			double suma =0; //Para que sean equiprobables, tiene que ser igual a 1. 
 			for (String i : this.probabilidades.keySet())
