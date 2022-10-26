@@ -49,8 +49,8 @@ public class Prueba
 			p2.procesamiento(3);
 			entropia=p2.entropia();
 			kraft= p2.mcMillan().split("/");
-			longitudMedia=p2.longitudMedia();
-			compacto=p2.compacto();
+			longitudMedia=3;
+			compacto=p2.compacto(3);
 			rendimiento = entropia/longitudMedia;
 			redundancia = 1 - rendimiento;
 			p2.ordenacion();
@@ -67,8 +67,8 @@ public class Prueba
 			p25.procesamiento(5);
 			entropia=p25.entropia();
 			kraft= p25.mcMillan().split("/");
-			longitudMedia=p25.longitudMedia();
-			compacto=p25.compacto();
+			longitudMedia=5;
+			compacto=p25.compacto(5);
 			rendimiento = entropia/longitudMedia;
 			redundancia = 1 - rendimiento;
 			p25.ordenacion();
@@ -85,8 +85,8 @@ public class Prueba
 			p27.procesamiento(7);
 			entropia=p27.entropia();
 			kraft= p27.mcMillan().split("/");
-			longitudMedia=p27.longitudMedia();
-			compacto=p27.compacto();
+			longitudMedia=7;
+			compacto=p27.compacto(7);
 			rendimiento = entropia/longitudMedia;
 			redundancia = 1 - rendimiento;
 			p27.ordenacion();
