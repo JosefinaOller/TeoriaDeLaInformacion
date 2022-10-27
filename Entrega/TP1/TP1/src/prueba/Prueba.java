@@ -56,7 +56,6 @@ public class Prueba
 			p2.ordenacion();
 			p2.huffman();
 			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"<p>"+compacto+"</p>"+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));
-			//p2.generaArchivoBinario("3 Caracteres.bin");
 			break;
 		}
 		case 2:
@@ -74,8 +73,6 @@ public class Prueba
 			p25.ordenacion();
 			p25.huffman();
 			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"<p>"+compacto+"</p>"+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));			
-			p25.ordenacion();
-			//p25.generaArchivoBinario("5 Caracteres.bin");
 			break;
 		}
 		case 3:
@@ -92,8 +89,6 @@ public class Prueba
 			p27.ordenacion();
 			p27.huffman();
 			JOptionPane.showMessageDialog(null,String.format("<html><body width='%1s'>Entropía: "+entropia+"<p>Desigualdad de kraft: "+kraft[0]+"</p>"+kraft[1]+"<p>Longitud media: "+df.format(longitudMedia)+"<p>"+compacto+"</p>"+"</p>"+"<p>Rendimiento: "+df.format(rendimiento)+"</p>"+"<p>Redundancia: "+df.format(redundancia)+"</p>", 200, 200));
-			p27.ordenacion();
-			//p27.generaArchivoBinario("7 Caracteres.bin");
 			break;
 		default:
 			break;
