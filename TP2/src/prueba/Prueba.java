@@ -10,7 +10,7 @@ public class Prueba {
 		
 		primeraparte.leeArchivo();
 		primeraparte.procesamiento();
-		primeraparte.huffman();
+		primeraparte.ShannonFano();
 	}
 
 }

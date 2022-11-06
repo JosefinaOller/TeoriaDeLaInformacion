@@ -23,6 +23,7 @@ public class PrimeraParte {
 	private HashMap<String, Double> probabilidades= new HashMap<String, Double>();
     private LinkedHashMap<String, Double> sortedMap = new LinkedHashMap<>();
     private ArrayList<Double> list = new ArrayList<>();
+    ArrayList<ElementoShannonFano> datosSF = new ArrayList<ElementoShannonFano>();
 	private int total_palabras;
 	private HashMap<String, String> codigos= new HashMap<String, String>();
 	private String[] datos =new String[15000];
@@ -180,8 +181,112 @@ public class PrimeraParte {
 	}
 
 	
-	
+	public void ShannonFano() {
+		
+		//ArrayList<ElementoShannonFano> auxSF2 = new ArrayList<ElementoShannonFano>();
+		
+		//Genero una lista de probabilidades y la ordeno
+		List <Entry<String,Double>> list = new ArrayList<>(probabilidades.entrySet());
+		list.sort(Entry.comparingByValue());
+		for(int i=0;i<list.size();i++) {
+			//datosSF.add(new ElementoShannonFano(list.get(i).getKey(),list.get(i).getValue()));
+		 //auxSF2.add(new ElementoShannonFano(list.get(i).getKey(),list.get(i).getValue()));
+		}
+		/* Datos de prueba como los de la clase 6*/
+		datosSF.add(new ElementoShannonFano("s1",0.4));
+		datosSF.add(new ElementoShannonFano("s2",0.2));
+		datosSF.add(new ElementoShannonFano("s3",0.15));
+		datosSF.add(new ElementoShannonFano("s4",0.1));
+		datosSF.add(new ElementoShannonFano("s5",0.06));
+		datosSF.add(new ElementoShannonFano("s6",0.04));
+		datosSF.add(new ElementoShannonFano("s7",0.03));
+		datosSF.add(new ElementoShannonFano("s8",0.02));
+		
+		this.recorrido(datosSF);
+		System.out.println(datosSF);
+		
+	}
+	private void recorrido(ArrayList<ElementoShannonFano> arraySF) {
+		double diff,min=1.0;
+		
+		//System.out.println(arraySF.size());
+		//System.out.println(arraySF.size());
+		ElementoShannonFano elementSF,elementSF2;
+		ArrayList<ElementoShannonFano> conjunto1=new ArrayList<ElementoShannonFano>();;
+		ArrayList<ElementoShannonFano> conjunto2 = new ArrayList<ElementoShannonFano>();;
+		if(arraySF!=null && arraySF.size()>1) {
+		if(arraySF.size()==2) {
+			if(arraySF.get(0).getProbabilidad()>arraySF.get(1).getProbabilidad()) {
+				añadirCodigo(arraySF.get(0).getClave(),1);
+				añadirCodigo(arraySF.get(1).getClave(),0);
+			}else {
+				añadirCodigo(arraySF.get(0).getClave(),0);
+				añadirCodigo(arraySF.get(1).getClave(),1);
+			}
+		}else {
+			ArrayList<ElementoShannonFano> auxSF=(ArrayList<ElementoShannonFano>) arraySF.clone();
+			ArrayList<ElementoShannonFano> auxSF2 = new ArrayList<ElementoShannonFano>();
+			
+			for(int i=0;i<arraySF.size();i++) {
+				
+				elementSF=(ElementoShannonFano) auxSF.get(i);
+				auxSF2.add(auxSF.get(i));
+				auxSF.remove(elementSF);
+				
+				for(int j=0;j<auxSF.size();j++) {
+					
+					elementSF2=(ElementoShannonFano) auxSF.get(j);
+					auxSF2.add(elementSF2);
+					auxSF.remove(elementSF2);
+					
+					diff =sumatoria(auxSF)-sumatoria(auxSF2);
+					if(sumatoria(auxSF)-sumatoria(auxSF2)<min) {
+						min=diff;
+						conjunto1=(ArrayList<ElementoShannonFano>) auxSF.clone();
+						conjunto2=(ArrayList<ElementoShannonFano>) auxSF2.clone();
+					
 
+					}
+					auxSF2.remove(elementSF2);
+					auxSF.add(j,elementSF2);
+
+				}
+				auxSF2.remove(elementSF);
+				auxSF.add(i,elementSF);
+			
+			}
+
+			conjunto2.forEach((elemento)->{
+				añadirCodigo(elemento.getClave(),1);
+			}
+			);
+			conjunto1.forEach((elemento)->{
+				añadirCodigo(elemento.getClave(),0);
+			}
+			);
+		
+			recorrido(conjunto1);
+			recorrido(conjunto2);
+		}
+		}
+	}
+	
+	private void añadirCodigo(String clave,int valor) {
+
+		datosSF.forEach((elemento)->{
+			if(elemento.getClave().equals(clave)) {
+				elemento.setCodigo(elemento.getCodigo()+valor);
+			}
+		});
+	}
+	
+	private double sumatoria(ArrayList<ElementoShannonFano> arraySF) {
+		double sum=0;
+		for(int i=0;i<arraySF.size();i++) {	
+			sum+=arraySF.get(i).getProbabilidad();
+		}
+		return sum;
+	}
 	
 	
 }
