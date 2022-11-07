@@ -1,10 +1,13 @@
 package modelo;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,59 +21,49 @@ import javax.swing.JOptionPane;
 import modelo.NodoArbol;
 
 public class PrimeraParte {
-	
 	private HashMap<String, Integer> apariciones= new HashMap<String, Integer>();
 	private HashMap<String, Double> probabilidades= new HashMap<String, Double>();
     private LinkedHashMap<String, Double> sortedMap = new LinkedHashMap<>();
     private ArrayList<Double> list = new ArrayList<>();
-    ArrayList<ElementoShannonFano> datosSF = new ArrayList<ElementoShannonFano>();
+    private ArrayList<ElementoShannonFano> datosSF = new ArrayList<ElementoShannonFano>();
 	private int total_palabras;
 	private HashMap<String, String> codigos= new HashMap<String, String>();
 	private String[] datos =new String[15000];
 	
 	public void leeArchivo()
 	{
+		File arch = new File("tp2_grupo1.txt");
+		Charset.forName("UTF-8").newDecoder();
 		try
 		{
-			FileReader arch = new FileReader("tp2_grupo1.txt");
-			try
+			char letra;
+			this.total_palabras=0;
+			try (BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(arch),  StandardCharsets.UTF_8)))
 			{
-				if (arch.ready())
-				{
-					char letra;
-					this.total_palabras=0;
-					try (BufferedReader lector = new BufferedReader(arch))
-					{
-						String palabra="";
-						int i=0;
-						while ((letra = (char) lector.read()) != 65535) {
-							if(letra != ' ' && letra !='\n'  ) {
-								if(letra!=',' && letra !='!' && letra!='.' && letra !='?' && letra!='¡' && letra !='¿' && letra !='('&& letra !=')' && letra !=':' )
-									palabra += letra;
-							}else{
-								this.total_palabras += 1;
-								if(this.apariciones.containsKey(palabra)){
-									this.apariciones.put(palabra, this.apariciones.get(palabra)+1);
-								}else {
-									this.apariciones.put(palabra, 1);
-								}
-								datos[i]=palabra;	
-								i++;
-								palabra="";
-							}
+				String palabra="";
+				int i=0;
+				while ((letra = (char) lector.read()) != 65535) {
+					if(letra != ' ' && letra !='\n') {
+						if(letra!=',' && letra !='!' && letra!='.' && letra !='?' && letra!='\u00A1' && letra !='\u00BF' && letra !='('&& letra !=')' && letra !=':' && letra !=';' && letra !='\"' && letra !='\'' && letra !='\r')
+							palabra += letra;
+					}else{
+						this.total_palabras += 1;
+						if(this.apariciones.containsKey(palabra)){
+							this.apariciones.put(palabra, this.apariciones.get(palabra)+1);
+						}else {
+							this.apariciones.put(palabra, 1);
 						}
-						//System.out.println("apariciones: " + this.apariciones.toString());
+						datos[i]=palabra;	
+						i++;
+						palabra="";
 					}
 				}
-			} catch (IOException e)
-			{
-				JOptionPane.showMessageDialog(null, "Error de lectura de archivo");
+				System.out.println("apariciones: " + this.apariciones.toString());
 			}
-			
-		} catch (FileNotFoundException e)
+		} catch (IOException e)
 		{
-			JOptionPane.showMessageDialog(null, "Error de apertura de archivo");
-		}
+			JOptionPane.showMessageDialog(null, "Error de lectura de archivo");
+		} 
 	}
 	
 	public void procesamiento() {
@@ -188,10 +181,10 @@ public class PrimeraParte {
 		//Genero una lista de probabilidades y la ordeno
 		List <Entry<String,Double>> list = new ArrayList<>(probabilidades.entrySet());
 		list.sort(Entry.comparingByValue());
-		for(int i=0;i<list.size();i++) {
-			//datosSF.add(new ElementoShannonFano(list.get(i).getKey(),list.get(i).getValue()));
-		 //auxSF2.add(new ElementoShannonFano(list.get(i).getKey(),list.get(i).getValue()));
-		}
+		/*for(int i=0;i<list.size();i++) {
+			datosSF.add(new ElementoShannonFano(list.get(i).getKey(),list.get(i).getValue()));
+			auxSF2.add(new ElementoShannonFano(list.get(i).getKey(),list.get(i).getValue()));
+		}*/
 		/* Datos de prueba como los de la clase 6*/
 		datosSF.add(new ElementoShannonFano("s1",0.4));
 		datosSF.add(new ElementoShannonFano("s2",0.2));
@@ -217,11 +210,11 @@ public class PrimeraParte {
 		if(arraySF!=null && arraySF.size()>1) {
 		if(arraySF.size()==2) {
 			if(arraySF.get(0).getProbabilidad()>arraySF.get(1).getProbabilidad()) {
-				añadirCodigo(arraySF.get(0).getClave(),1);
-				añadirCodigo(arraySF.get(1).getClave(),0);
+				anadirCodigo(arraySF.get(0).getClave(),1);
+				anadirCodigo(arraySF.get(1).getClave(),0);
 			}else {
-				añadirCodigo(arraySF.get(0).getClave(),0);
-				añadirCodigo(arraySF.get(1).getClave(),1);
+				anadirCodigo(arraySF.get(0).getClave(),0);
+				anadirCodigo(arraySF.get(1).getClave(),1);
 			}
 		}else {
 			ArrayList<ElementoShannonFano> auxSF=(ArrayList<ElementoShannonFano>) arraySF.clone();
@@ -257,11 +250,11 @@ public class PrimeraParte {
 			}
 
 			conjunto2.forEach((elemento)->{
-				añadirCodigo(elemento.getClave(),1);
+				anadirCodigo(elemento.getClave(),1);
 			}
 			);
 			conjunto1.forEach((elemento)->{
-				añadirCodigo(elemento.getClave(),0);
+				anadirCodigo(elemento.getClave(),0);
 			}
 			);
 		
@@ -271,7 +264,7 @@ public class PrimeraParte {
 		}
 	}
 	
-	private void añadirCodigo(String clave,int valor) {
+	private void anadirCodigo(String clave,int valor) {
 
 		datosSF.forEach((elemento)->{
 			if(elemento.getClave().equals(clave)) {
