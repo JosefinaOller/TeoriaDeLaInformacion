@@ -37,14 +37,15 @@ public class PrimeraParte {
 		{
 			char letra;
 			this.total_palabras=0;
-			try (BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(arch),  StandardCharsets.UTF_8)))
+			try (BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(arch), StandardCharsets.UTF_8)))
 			{
 				String palabra="";
 				int i=0;
 				while ((letra = (char) lector.read()) != 65535) {
 					if(letra != ' ' && letra !='\n') {
-						if(letra!=',' && letra !='!' && letra!='.' && letra !='?' && letra!='\u00A1' && letra !='\u00BF' && letra !='('&& letra !=')' && letra !=':' && letra !=';' && letra !='\"' && letra !='\'' && letra !='\r')
-							palabra += letra;
+						palabra += letra;
+						if(letra =='\r')//Caso del enter
+							palabra += '\n';
 					}else{
 						this.total_palabras += 1;
 						if(this.apariciones.containsKey(palabra)){
