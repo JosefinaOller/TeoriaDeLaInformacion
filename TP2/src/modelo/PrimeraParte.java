@@ -46,11 +46,23 @@ public class PrimeraParte {
 				String palabra="";
 				int i=0;
 				while ((letra = (char) lector.read()) != 65535) {
-					if(letra != ' ' && letra !='\n') {
+					if(letra != ' '  && letra != '\n') {
 						palabra += letra;
 						if(letra =='\r')//Caso del enter
 							palabra += '\n';
 					}else{
+						if(letra == '\n' && palabra != "") {
+							String espacio= "";
+							espacio+=letra;
+							this.total_palabras += 1;
+							if (this.apariciones.containsKey(espacio)) {
+								this.apariciones.put(espacio, this.apariciones.get(espacio) + 1);
+							} else {
+								this.apariciones.put(espacio, 1);
+							}
+							datos[i] = espacio;
+							i++;
+						}
 						this.total_palabras += 1;
 						if (this.apariciones.containsKey(palabra)) {
 							this.apariciones.put(palabra, this.apariciones.get(palabra) + 1);
@@ -138,11 +150,11 @@ public class PrimeraParte {
 		double tasacompresion = (double) this.largoArchivoOriginal / this.largoArchivoHuffman;
 
 		JOptionPane.showMessageDialog(null,
-				String.format("<html><body width='%1s'>Entropía: " + df.format(entropiaHuffman) + "<p>LongitudMedia: "
-						+ df.format(longitudMediaHuffman) + "</p><p>rendimiento: " + df.format(rendimiento)
-						+ "</p><p>redundancia: " + df.format(1.0 - rendimiento) + "</p><p>largo archivo original: "
-						+ this.largoArchivoOriginal + "</p><p>largo archivo huffman: " + this.largoArchivoHuffman
-						+ "</p><p>tasa de compresión: " + tasacompresion, 200, 200));
+				String.format("<html><body width='%1s'>Entropía: " + df.format(entropiaHuffman) + "<p>Longitud Media: "
+						+ df.format(longitudMediaHuffman) + "</p><p>Rendimiento: " + df.format(rendimiento)
+						+ "</p><p>Redundancia: " + df.format(1.0 - rendimiento) + "</p><p>Largo archivo original: "
+						+ this.largoArchivoOriginal + "</p><p>Largo archivo huffman: " + this.largoArchivoHuffman
+						+ "</p><p>Tasa de compresión: " + tasacompresion, 200, 200));
 
 	}
 
@@ -276,11 +288,11 @@ public class PrimeraParte {
 			JOptionPane.showMessageDialog(null,
 					String.format(
 							"<html><body width='%1s'>Datos Shanon-Fano<p>Entropía: " + df.format(entropiaShannonFano)
-									+ "</p><p>LongitudMedia: " + df.format(longitudMediaShannonFanon)
-									+ "</p><p>rendimiento: " + df.format(rendimiento) + "</p><p>redundancia: "
-									+ df.format(1.0 - rendimiento) + "</p><p>largo archivo original: "
-									+ this.largoArchivoOriginal + "</p><p>largo archivo ShannonFanon: "
-									+ this.largoArchivoShanonFano + "</p><p>tasa de compresión: " + tasacompresion,
+									+ "</p><p>Longitud Media: " + df.format(longitudMediaShannonFanon)
+									+ "</p><p>Rendimiento: " + df.format(rendimiento) + "</p><p>Redundancia: "
+									+ df.format(1.0 - rendimiento) + "</p><p>Largo archivo original: "
+									+ this.largoArchivoOriginal + "</p><p>Largo archivo ShannonFanon: "
+									+ this.largoArchivoShanonFano + "</p><p>Tasa de compresión: " + tasacompresion,
 							200, 200));
 		} catch (IOException e) {
 			e.printStackTrace();
