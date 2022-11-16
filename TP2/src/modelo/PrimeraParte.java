@@ -29,7 +29,7 @@ public class PrimeraParte {
 	private HashMap<String, String> codigosHuf = new HashMap<String, String>();
 	private HashMap<String, String> codigosSF = new HashMap<String, String>();
 	private HashMap<String, Double> informacionHuffman = new HashMap<String, Double>();
-	private String[] datos = new String[15000];
+	private String[] datos = new String[17000];
 	private int largoArchivoOriginal;
 	private int largoArchivoHuffman;
 	private int largoArchivoShanonFano;
@@ -46,25 +46,30 @@ public class PrimeraParte {
 				String palabra = "";
 				int i = 0;
 				while ((letra = (char) lector.read()) != 65535) {
-					if (letra != ' ' && letra != '\n') {
-						if (letra != ',' && letra != '!' && letra != '.' && letra != '?' && letra != '\u00A1'
-								&& letra != '\u00BF' && letra != '(' && letra != ')' && letra != ':' && letra != ';'
-								&& letra != '\"' && letra != '\'' && letra != '\r')
-							palabra += letra;
+					if (letra != ' ' && letra != '\n' && letra != '\r') {
+						palabra += letra;
+
 					} else {
-						this.total_palabras += 1;
-						if (this.apariciones.containsKey(palabra)) {
-							this.apariciones.put(palabra, this.apariciones.get(palabra) + 1);
-						} else {
-							this.apariciones.put(palabra, 1);
+						if (palabra != "") {
+							this.total_palabras += 1;
+							if (this.apariciones.containsKey(palabra)) {
+								this.apariciones.put(palabra, this.apariciones.get(palabra) + 1);
+							} else {
+								this.apariciones.put(palabra, 1);
+							}
+							datos[i] = palabra;
+							i++;
 						}
-						datos[i] = palabra;
-						i++;
+						if ((letra == '\n' || letra == '\r') && datos[i - 1] != "\n") {
+							datos[i] = "\n";
+							i++;
+						}
 						palabra = "";
 					}
 				}
 				this.largoArchivoOriginal = i;
 				System.out.println("apariciones: " + this.apariciones.toString());
+				System.out.println(datos[0]);
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Error de lectura de archivo");
@@ -130,7 +135,7 @@ public class PrimeraParte {
 			}
 		}
 		recorrido(aux2.get(0));
-		System.out.println("Codigos de cada palabra\n" + this.codigosHuf.toString());
+		// System.out.println("Codigos de cada palabra\n" + this.codigosHuf.toString());
 
 		this.generarArchivoHuffman();
 		double entropiaHuffman = entropia(this.codigosHuf);
@@ -139,11 +144,11 @@ public class PrimeraParte {
 		double tasacompresion = (double) this.largoArchivoOriginal / this.largoArchivoHuffman;
 
 		JOptionPane.showMessageDialog(null,
-				String.format("<html><body width='%1s'>Entropía: " + df.format(entropiaHuffman) + "<p>LongitudMedia: "
-						+ df.format(longitudMediaHuffman) + "</p><p>rendimiento: " + df.format(rendimiento)
-						+ "</p><p>redundancia: " + df.format(1.0 - rendimiento) + "</p><p>largo archivo original: "
-						+ this.largoArchivoOriginal + "</p><p>largo archivo huffman: " + this.largoArchivoHuffman
-						+ "</p><p>tasa de compresión: " + tasacompresion, 200, 200));
+				String.format("<html><body width='%1s'>Entropía: " + df.format(entropiaHuffman) + "<p>Longitud Media: "
+						+ df.format(longitudMediaHuffman) + "</p><p>Rendimiento: " + df.format(rendimiento)
+						+ "</p><p>Redundancia: " + df.format(1.0 - rendimiento) + "</p><p>Largo archivo original: "
+						+ this.largoArchivoOriginal + "</p><p>Largo archivo huffman: " + this.largoArchivoHuffman
+						+ "</p><p>Tasa de compresión: " + tasacompresion, 200, 200));
 
 	}
 
@@ -174,17 +179,21 @@ public class PrimeraParte {
 			FileWriter myWriter = new FileWriter("tp2_grupo1.huf");
 			this.codigosHuf.forEach((palabra, codigo) -> {
 				try {
-					myWriter.write(palabra + ":" + codigo+"\n");
+					myWriter.write(palabra + ">" + codigo + "\n");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 
 			});
-			myWriter.write("!-------FIN DICCIONARIO-------\n");
+			myWriter.write("€-------FIN DICCIONARIO-------\n");
 			for (String palabra : this.datos) {
 				if (palabra != null) {
-					myWriter.write(this.codigosHuf.get(palabra) + " ");
-					this.largoArchivoHuffman += (this.codigosHuf.get(palabra).length() + 1);
+					if (palabra.equals("\n"))
+						myWriter.write('\n');
+					else {
+						myWriter.write(this.codigosHuf.get(palabra) + " ");
+						this.largoArchivoHuffman += (this.codigosHuf.get(palabra).length() + 1);
+					}
 				}
 			}
 			myWriter.close();
@@ -219,17 +228,21 @@ public class PrimeraParte {
 			FileWriter myWriter = new FileWriter("tp2_grupo1.fan");
 			this.codigosSF.forEach((palabra, codigo) -> {
 				try {
-					myWriter.write(palabra + ":" + codigo+'\n');
+					myWriter.write(palabra + ">" + codigo + '\n');
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 
 			});
-			myWriter.write("!-------FIN DICCIONARIO-------\n");
+			myWriter.write("€-------FIN DICCIONARIO-------\n");
 			for (String palabra : this.datos) {
 				if (palabra != null) {
-					myWriter.write(this.codigosSF.get(palabra) + " ");
-					this.largoArchivoShanonFano += (this.codigosSF.get(palabra).length() + 1);
+					if (palabra.equals("\n"))
+						myWriter.write('\n');
+					else {
+						myWriter.write(this.codigosSF.get(palabra) + " ");
+						this.largoArchivoShanonFano += (this.codigosSF.get(palabra).length() + 1);
+					}
 				}
 			}
 			myWriter.close();
@@ -241,7 +254,6 @@ public class PrimeraParte {
 
 	}
 
-
 	public void ShannonFano() {
 
 		// ArrayList<ElementoShannonFano> auxSF2 = new ArrayList<ElementoShannonFano>();
@@ -249,6 +261,7 @@ public class PrimeraParte {
 		// Genero una lista de probabilidades y la ordeno
 		List<Entry<String, Double>> list = new ArrayList<>(probabilidades.entrySet());
 		list.sort(Entry.comparingByValue());
+		System.out.println(list.size());
 		for (int i = 0; i < list.size(); i++) {
 			datosSF.add(new ElementoShannonFano(list.get(i).getKey(), list.get(i).getValue()));
 		}
@@ -277,11 +290,11 @@ public class PrimeraParte {
 			JOptionPane.showMessageDialog(null,
 					String.format(
 							"<html><body width='%1s'>Datos Shanon-Fano<p>Entropía: " + df.format(entropiaShannonFano)
-									+ "</p><p>LongitudMedia: " + df.format(longitudMediaShannonFanon)
-									+ "</p><p>rendimiento: " + df.format(rendimiento) + "</p><p>redundancia: "
-									+ df.format(1.0 - rendimiento) + "</p><p>largo archivo original: "
-									+ this.largoArchivoOriginal + "</p><p>largo archivo ShannonFanon: "
-									+ this.largoArchivoShanonFano + "</p><p>tasa de compresión: " + tasacompresion,
+									+ "</p><p>Longitud Media: " + df.format(longitudMediaShannonFanon)
+									+ "</p><p>Rendimiento: " + df.format(rendimiento) + "</p><p>Redundancia: "
+									+ df.format(1.0 - rendimiento) + "</p><p>Largo archivo original: "
+									+ this.largoArchivoOriginal + "</p><p>Largo archivo ShannonFanon: "
+									+ this.largoArchivoShanonFano + "</p><p>Tasa de compresión: " + tasacompresion,
 							200, 200));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -372,13 +385,14 @@ public class PrimeraParte {
 
 	private void anadirCodigo(String clave, String valor) {
 
-		datosSF.forEach((elemento) -> {
-			if (elemento.getClave().equals(clave)) {
+			datosSF.forEach((elemento) -> {
+				if (elemento.getClave().equals(clave)) {
 
-				elemento.setCodigo(elemento.getCodigo() + valor);
+					elemento.setCodigo(elemento.getCodigo() + valor);
 
-			}
-		});
+				}
+			});
+
 	}
 
 	private double sumatoria(ArrayList<ElementoShannonFano> arraySF) {
@@ -412,15 +426,15 @@ public class PrimeraParte {
 					if (!finDiccionario) {
 
 						if (lecturaPalabra) {
-							if (letra == '!')
+							if (letra == '€')
 								finDiccionario = true;
-							else if (letra == ':')
+							else if (letra == '>')
 								lecturaPalabra = false;
 							else
 								palabra += letra;
 
 						} else {
-							if (letra == '\n') {	
+							if (letra == '\n') {
 								palabras.put(codigo, palabra);
 								codigo = "";
 								palabra = "";
@@ -429,18 +443,20 @@ public class PrimeraParte {
 								codigo += letra;
 							}
 						}
-					} else {
-						if (!inicioArchivo && letra == '\n')
-							inicioArchivo = true;
 					}
 
 					if (inicioArchivo) {
 						if (letra == ' ') {
-							myWriter.write(palabras.get(codigo)+" ");
+							myWriter.write(palabras.get(codigo) + " ");
 							codigo = "";
-						} else if(letra!='\n') {
+						} else if (letra != '\n') {
 							codigo += letra;
+						} else {
+							myWriter.write('\n');
+							codigo = "";
 						}
+					} else if (finDiccionario && letra == '\n') {
+						inicioArchivo = true;
 					}
 				}
 				myWriter.close();
