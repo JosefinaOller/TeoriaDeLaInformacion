@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -24,7 +25,9 @@ public class PrimeraParte {
 	private HashMap<String, Double> probabilidades = new HashMap<String, Double>();
 	private LinkedHashMap<String, Double> sortedMap = new LinkedHashMap<>();
 	private ArrayList<Double> list = new ArrayList<>();
-	ArrayList<ElementoShannonFano> datosSF = new ArrayList<ElementoShannonFano>();
+	// ArrayList<ElementoShannonFano> datosSF = new
+	// ArrayList<ElementoShannonFano>();
+	private HashMap<String, ElementoShannonFano> datosSF = new HashMap<String, ElementoShannonFano>();
 	private int total_palabras;
 	private HashMap<String, String> codigosHuf = new HashMap<String, String>();
 	private HashMap<String, String> codigosSF = new HashMap<String, String>();
@@ -263,14 +266,18 @@ public class PrimeraParte {
 		list.sort(Entry.comparingByValue());
 		System.out.println(list.size());
 		for (int i = 0; i < list.size(); i++) {
-			datosSF.add(new ElementoShannonFano(list.get(i).getKey(), list.get(i).getValue()));
+			datosSF.put(list.get(i).getKey(), new ElementoShannonFano(list.get(i).getKey(), list.get(i).getValue()));
 		}
 
 		try {
 			FileWriter myWriter = new FileWriter("datosShannonFano.txt");
-			this.recorrido(datosSF);
+			Collection<ElementoShannonFano> values = datosSF.values();
 
-			for (ElementoShannonFano dato : datosSF) {
+			// Creating an ArrayList of values
+			ArrayList<ElementoShannonFano> arraySF = new ArrayList<>(values);
+			this.recorrido(arraySF);
+
+			for (ElementoShannonFano dato : this.datosSF.values()) {
 
 				myWriter.write(dato.toString());
 				myWriter.write("\n");
@@ -385,14 +392,9 @@ public class PrimeraParte {
 
 	private void anadirCodigo(String clave, String valor) {
 
-			datosSF.forEach((elemento) -> {
-				if (elemento.getClave().equals(clave)) {
+		ElementoShannonFano elemento = datosSF.get(clave);
 
-					elemento.setCodigo(elemento.getCodigo() + valor);
-
-				}
-			});
-
+		elemento.setCodigo(elemento.getCodigo() + valor);
 	}
 
 	private double sumatoria(ArrayList<ElementoShannonFano> arraySF) {
