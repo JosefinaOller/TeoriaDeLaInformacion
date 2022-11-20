@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Entrega/TP1/TP1/src"/>
+	<classpathentry kind="src" path="TP1/src"/>
+	<classpathentry kind="src" path="TP2/src"/>
+	<classpathentry kind="lib" path="Entrega/TP1.jar"/>
+	<classpathentry kind="output" path="Entrega/TP1/TP1/classes"/>
+</classpath>

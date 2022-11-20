@@ -150,11 +150,11 @@ public class PrimeraParte {
 		double tasacompresion = (double) this.largoArchivoOriginal / this.largoArchivoHuffman;
 
 		JOptionPane.showMessageDialog(null,
-				String.format("<html><body width='%1s'>Entropía: " + df.format(entropiaHuffman) + "<p>Longitud Media: "
+				String.format("<html><body width='%1s'>Entrop\u00eda: " + df.format(entropiaHuffman) + "<p>Longitud Media: "
 						+ df.format(longitudMediaHuffman) + "</p><p>Rendimiento: " + df.format(rendimiento)
 						+ "</p><p>Redundancia: " + df.format(1.0 - rendimiento) + "</p><p>Largo archivo original: "
 						+ this.largoArchivoOriginal + "</p><p>Largo archivo huffman: " + this.largoArchivoHuffman
-						+ "</p><p>Tasa de compresión: " + tasacompresion, 200, 200));
+						+ "</p><p>Tasa de compresi\u00f3n: " + tasacompresion, 200, 200));
 
 	}
 
@@ -191,7 +191,7 @@ public class PrimeraParte {
 				}
 
 			});
-			myWriter.write("!-------FIN DICCIONARIO-------\n");
+			myWriter.write("|-------FIN DICCIONARIO-------\n");
 			for (String palabra : this.datos) {
 				if (palabra != null) {
 					myWriter.write(this.codigosHuf.get(palabra) + " ");
@@ -236,7 +236,7 @@ public class PrimeraParte {
 				}
 
 			});
-			myWriter.write("!-------FIN DICCIONARIO-------\n");
+			myWriter.write("|-------FIN DICCIONARIO-------\n");
 			for (String palabra : this.datos) {
 				if (palabra != null) {
 					myWriter.write(this.codigosSF.get(palabra) + " ");
@@ -287,12 +287,12 @@ public class PrimeraParte {
 
 			JOptionPane.showMessageDialog(null,
 					String.format(
-							"<html><body width='%1s'>Datos Shanon-Fano<p>Entropía: " + df.format(entropiaShannonFano)
+							"<html><body width='%1s'>Datos Shanon-Fano<p>Entrop\u00eda: " + df.format(entropiaShannonFano)
 									+ "</p><p>Longitud Media: " + df.format(longitudMediaShannonFanon)
 									+ "</p><p>Rendimiento: " + df.format(rendimiento) + "</p><p>Redundancia: "
 									+ df.format(1.0 - rendimiento) + "</p><p>Largo archivo original: "
 									+ this.largoArchivoOriginal + "</p><p>Largo archivo ShannonFanon: "
-									+ this.largoArchivoShanonFano + "</p><p>Tasa de compresión: " + tasacompresion,
+									+ this.largoArchivoShanonFano + "</p><p>Tasa de compresi\u00f3n: " + tasacompresion,
 							200, 200));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -423,7 +423,7 @@ public class PrimeraParte {
 					if (!finDiccionario) {
 
 						if (lecturaPalabra) {
-							if (letra == '!')
+							if (letra == '|')
 								finDiccionario = true;
 							else if (letra == ':')
 								lecturaPalabra = false;
