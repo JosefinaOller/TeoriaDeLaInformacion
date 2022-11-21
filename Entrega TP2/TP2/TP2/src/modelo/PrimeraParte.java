@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -24,12 +25,14 @@ public class PrimeraParte {
 	private HashMap<String, Double> probabilidades = new HashMap<String, Double>();
 	private LinkedHashMap<String, Double> sortedMap = new LinkedHashMap<>();
 	private ArrayList<Double> list = new ArrayList<>();
-	ArrayList<ElementoShannonFano> datosSF = new ArrayList<ElementoShannonFano>();
+	// ArrayList<ElementoShannonFano> datosSF = new
+	// ArrayList<ElementoShannonFano>();
+	private HashMap<String, ElementoShannonFano> datosSF = new HashMap<String, ElementoShannonFano>();
 	private int total_palabras;
 	private HashMap<String, String> codigosHuf = new HashMap<String, String>();
 	private HashMap<String, String> codigosSF = new HashMap<String, String>();
 	private HashMap<String, Double> informacionHuffman = new HashMap<String, Double>();
-	private String[] datos = new String[15000];
+	private String[] datos = new String[17000];
 	private int largoArchivoOriginal;
 	private int largoArchivoHuffman;
 	private int largoArchivoShanonFano;
@@ -40,42 +43,36 @@ public class PrimeraParte {
 		Charset.forName("UTF-8").newDecoder();
 		try {
 			char letra;
-			this.total_palabras=0;
-			try (BufferedReader lector = new BufferedReader(new InputStreamReader(new FileInputStream(arch), StandardCharsets.UTF_8)))
-			{
-				String palabra="";
-				int i=0;
+			this.total_palabras = 0;
+			try (BufferedReader lector = new BufferedReader(
+					new InputStreamReader(new FileInputStream(arch), StandardCharsets.UTF_8))) {
+				String palabra = "";
+				int i = 0;
 				while ((letra = (char) lector.read()) != 65535) {
-					if(letra != ' '  && letra != '\n') {
+					if (letra != ' ' && letra != '\n' && letra != '\r') {
 						palabra += letra;
-						if(letra =='\r')//Caso del enter
-							palabra += '\n';
-					}else{
-						if(letra == '\n' && palabra != "") {
-							String espacio= "";
-							espacio+=letra;
+
+					} else {
+						if (palabra != "") {
 							this.total_palabras += 1;
-							if (this.apariciones.containsKey(espacio)) {
-								this.apariciones.put(espacio, this.apariciones.get(espacio) + 1);
+							if (this.apariciones.containsKey(palabra)) {
+								this.apariciones.put(palabra, this.apariciones.get(palabra) + 1);
 							} else {
-								this.apariciones.put(espacio, 1);
+								this.apariciones.put(palabra, 1);
 							}
-							datos[i] = espacio;
+							datos[i] = palabra;
 							i++;
 						}
-						this.total_palabras += 1;
-						if (this.apariciones.containsKey(palabra)) {
-							this.apariciones.put(palabra, this.apariciones.get(palabra) + 1);
-						} else {
-							this.apariciones.put(palabra, 1);
+						if ((letra == '\n' || letra == '\r') && datos[i - 1] != "\n") {
+							datos[i] = "\n";
+							i++;
 						}
-						datos[i] = palabra;
-						i++;
 						palabra = "";
 					}
 				}
 				this.largoArchivoOriginal = i;
 				System.out.println("apariciones: " + this.apariciones.toString());
+				System.out.println(datos[0]);
 			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Error de lectura de archivo");
@@ -141,7 +138,7 @@ public class PrimeraParte {
 			}
 		}
 		recorrido(aux2.get(0));
-		System.out.println("Codigos de cada palabra\n" + this.codigosHuf.toString());
+		// System.out.println("Codigos de cada palabra\n" + this.codigosHuf.toString());
 
 		this.generarArchivoHuffman();
 		double entropiaHuffman = entropia(this.codigosHuf);
@@ -185,7 +182,7 @@ public class PrimeraParte {
 			FileWriter myWriter = new FileWriter("tp2_grupo1.huf");
 			this.codigosHuf.forEach((palabra, codigo) -> {
 				try {
-					myWriter.write(palabra + ":" + codigo+"\n");
+					myWriter.write(palabra + ">" + codigo + "\n");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -194,8 +191,12 @@ public class PrimeraParte {
 			myWriter.write("|-------FIN DICCIONARIO-------\n");
 			for (String palabra : this.datos) {
 				if (palabra != null) {
-					myWriter.write(this.codigosHuf.get(palabra) + " ");
-					this.largoArchivoHuffman += (this.codigosHuf.get(palabra).length() + 1);
+					if (palabra.equals("\n"))
+						myWriter.write('\n');
+					else {
+						myWriter.write(this.codigosHuf.get(palabra) + " ");
+						this.largoArchivoHuffman += (this.codigosHuf.get(palabra).length() + 1);
+					}
 				}
 			}
 			myWriter.close();
@@ -230,7 +231,7 @@ public class PrimeraParte {
 			FileWriter myWriter = new FileWriter("tp2_grupo1.fan");
 			this.codigosSF.forEach((palabra, codigo) -> {
 				try {
-					myWriter.write(palabra + ":" + codigo+'\n');
+					myWriter.write(palabra + ">" + codigo + '\n');
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -239,8 +240,12 @@ public class PrimeraParte {
 			myWriter.write("|-------FIN DICCIONARIO-------\n");
 			for (String palabra : this.datos) {
 				if (palabra != null) {
-					myWriter.write(this.codigosSF.get(palabra) + " ");
-					this.largoArchivoShanonFano += (this.codigosSF.get(palabra).length() + 1);
+					if (palabra.equals("\n"))
+						myWriter.write('\n');
+					else {
+						myWriter.write(this.codigosSF.get(palabra) + " ");
+						this.largoArchivoShanonFano += (this.codigosSF.get(palabra).length() + 1);
+					}
 				}
 			}
 			myWriter.close();
@@ -252,7 +257,6 @@ public class PrimeraParte {
 
 	}
 
-
 	public void ShannonFano() {
 
 		// ArrayList<ElementoShannonFano> auxSF2 = new ArrayList<ElementoShannonFano>();
@@ -260,15 +264,20 @@ public class PrimeraParte {
 		// Genero una lista de probabilidades y la ordeno
 		List<Entry<String, Double>> list = new ArrayList<>(probabilidades.entrySet());
 		list.sort(Entry.comparingByValue());
+		System.out.println(list.size());
 		for (int i = 0; i < list.size(); i++) {
-			datosSF.add(new ElementoShannonFano(list.get(i).getKey(), list.get(i).getValue()));
+			datosSF.put(list.get(i).getKey(), new ElementoShannonFano(list.get(i).getKey(), list.get(i).getValue()));
 		}
 
 		try {
 			FileWriter myWriter = new FileWriter("datosShannonFano.txt");
-			this.recorrido(datosSF);
+			Collection<ElementoShannonFano> values = datosSF.values();
 
-			for (ElementoShannonFano dato : datosSF) {
+			// Creating an ArrayList of values
+			ArrayList<ElementoShannonFano> arraySF = new ArrayList<>(values);
+			this.recorrido(arraySF);
+
+			for (ElementoShannonFano dato : this.datosSF.values()) {
 
 				myWriter.write(dato.toString());
 				myWriter.write("\n");
@@ -383,13 +392,9 @@ public class PrimeraParte {
 
 	private void anadirCodigo(String clave, String valor) {
 
-		datosSF.forEach((elemento) -> {
-			if (elemento.getClave().equals(clave)) {
+		ElementoShannonFano elemento = datosSF.get(clave);
 
-				elemento.setCodigo(elemento.getCodigo() + valor);
-
-			}
-		});
+		elemento.setCodigo(elemento.getCodigo() + valor);
 	}
 
 	private double sumatoria(ArrayList<ElementoShannonFano> arraySF) {
@@ -425,13 +430,13 @@ public class PrimeraParte {
 						if (lecturaPalabra) {
 							if (letra == '|')
 								finDiccionario = true;
-							else if (letra == ':')
+							else if (letra == '>')
 								lecturaPalabra = false;
 							else
 								palabra += letra;
 
 						} else {
-							if (letra == '\n') {	
+							if (letra == '\n') {
 								palabras.put(codigo, palabra);
 								codigo = "";
 								palabra = "";
@@ -440,18 +445,20 @@ public class PrimeraParte {
 								codigo += letra;
 							}
 						}
-					} else {
-						if (!inicioArchivo && letra == '\n')
-							inicioArchivo = true;
 					}
 
 					if (inicioArchivo) {
 						if (letra == ' ') {
-							myWriter.write(palabras.get(codigo)+" ");
+							myWriter.write(palabras.get(codigo) + " ");
 							codigo = "";
-						} else if(letra!='\n') {
+						} else if (letra != '\n') {
 							codigo += letra;
+						} else {
+							myWriter.write('\n');
+							codigo = "";
 						}
+					} else if (finDiccionario && letra == '\n') {
+						inicioArchivo = true;
 					}
 				}
 				myWriter.close();
