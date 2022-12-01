@@ -16,7 +16,9 @@ import java.io.Reader;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 
 import java.util.ArrayList;
@@ -45,17 +47,19 @@ public class PrimeraParte {
     private HashMap<String, String> codigosSF = new HashMap<String, String>();
     private HashMap<String, Double> informacionHuffman = new HashMap<String, Double>();
     private String[] datos = new String[17000];
-    private int largoArchivoOriginal;
-    private int largoArchivoHuffman;
-    private int largoArchivoShanonFano;
+    private long largoArchivoOriginal;
+    private long largoArchivoHuffman;
+    private long largoArchivoShanonFano;
     static DecimalFormat df = new DecimalFormat("#.########");
 
     public void leeArchivo() {
+    	Path path = Paths.get("tp2_grupo1.txt"); //para el largo original del archivo
         File arch = new File("tp2_grupo1.txt");
         Charset.forName("UTF-8").newDecoder();
         try {
             char letra;
             this.total_palabras = 0;
+            this.largoArchivoOriginal=Files.size(path);
             try (BufferedReader lector =
                  new BufferedReader(new InputStreamReader(new FileInputStream(arch), StandardCharsets.UTF_8))) {
                 String palabra = "";
@@ -78,9 +82,6 @@ public class PrimeraParte {
                         palabra = "";
                     }
                 }
-                this.largoArchivoOriginal = i;
-                System.out.println("apariciones: " + this.apariciones.toString());
-                System.out.println(datos[0]);
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error de lectura de archivo");
