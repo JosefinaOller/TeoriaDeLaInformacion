@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,14 +23,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
@@ -231,6 +228,7 @@ public class PrimeraParte {
                 
                 if (contador == 8) {
                     archivo2.write(bytee);
+                    this.largoArchivoHuffman += 1; //no se si es correcto
                     contador = 0;
                     bytee = 0;
                 }
@@ -289,6 +287,7 @@ public class PrimeraParte {
                 
                 if (contador == 8) {
                     archivo2.write(bytee);
+                    this.largoArchivoShanonFano +=1; //no se si es correcto
                     contador = 0;
                     bytee = 0;
                 }
@@ -303,40 +302,6 @@ public class PrimeraParte {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void generarArchivoHuffman() {
-        try {
-            this.largoArchivoHuffman = 0;
-            FileWriter myWriter = new FileWriter("tp2_grupo1.huf");
-            this.codigosHuf.forEach((palabra, codigo) -> {
-                try {
-                    myWriter.write(palabra + ">" + codigo + "\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            });
-            myWriter.write("|-------FIN DICCIONARIO-------\n");
-            for (String palabra : this.datos) {
-                if (palabra != null) {
-                    if (palabra.equals("\n"))
-                        myWriter.write('\n');
-                    else {
-                        myWriter.write(this.codigosHuf.get(palabra) + " ");
-                        this.largoArchivoHuffman += (this.codigosHuf
-                                                         .get(palabra)
-                                                         .length() + 1);
-                    }
-                }
-            }
-            myWriter.close();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-
     }
 
     private double entropia(HashMap<String, String> codigos) {
@@ -355,41 +320,7 @@ public class PrimeraParte {
 
         return longitud_media;
     }
-
-    private void generarArchivoShannonFano() {
-        try {
-            this.largoArchivoShanonFano = 0;
-            FileWriter myWriter = new FileWriter("tp2_grupo1.fan");
-            this.codigosSF.forEach((palabra, codigo) -> {
-                try {
-                    myWriter.write(palabra + ">" + codigo + '\n');
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            });
-            myWriter.write("|-------FIN DICCIONARIO-------\n");
-            for (String palabra : this.datos) {
-                if (palabra != null) {
-                    if (palabra.equals("\n"))
-                        myWriter.write('\n');
-                    else {
-                        myWriter.write(this.codigosSF.get(palabra) + " ");
-                        this.largoArchivoShanonFano += (this.codigosSF
-                                                            .get(palabra)
-                                                            .length() + 1);
-                    }
-                }
-            }
-            myWriter.close();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-
-    }
-
+    
     public void ShannonFano() {
         // Genero una lista de probabilidades y la ordeno
         List<Entry<String, Double>> list = new ArrayList<>(probabilidades.entrySet());
@@ -496,7 +427,8 @@ public class PrimeraParte {
 		return (int) Math.ceil(medio - 1);
 	}
 
-    public void decodificacion(String tipo) {
+    @SuppressWarnings("unchecked")
+	public void decodificacion(String tipo) {
         File archivo;
         if(tipo.equals("huf"))
             archivo = new File("hufCodificado.huf");
@@ -590,7 +522,6 @@ public class PrimeraParte {
                  new BufferedReader(new InputStreamReader(new FileInputStream(arch), StandardCharsets.UTF_8))) {
                 String codigo = "";
                 String palabra = "";
-                int i = 0;
                 while ((letra = (char) lector.read()) != 65535) {
 
                     if (!finDiccionario) {
