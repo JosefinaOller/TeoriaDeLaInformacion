@@ -20,11 +20,9 @@ public class Prueba
 			{
 			case 0:
 				primeraparte.huffman();
-				//primeraparte.descomprimirArchivo("tp2_grupo1.huf", "hufDescomprimido.txt");
 				break;
 			case 1:
 				primeraparte.ShannonFano();
-				primeraparte.descomprimirArchivo("tp2_grupo1.fan", "fanDescomprimido.txt");
 				break;
 			default:
 				break;
