@@ -187,6 +187,7 @@ public class PrimeraParte {
 
 
     public void codificacionHuffman() {
+        this.largoArchivoHuffman=0;
         try (InputStream in = new FileInputStream("tp2_grupo1.txt");
              Reader reader = new InputStreamReader(in)) {
 
@@ -228,7 +229,7 @@ public class PrimeraParte {
                 
                 if (contador == 8) {
                     archivo2.write(bytee);
-                    this.largoArchivoHuffman += 1; //no se si es correcto
+                    this.largoArchivoHuffman += 1; 
                     contador = 0;
                     bytee = 0;
                 }
@@ -246,6 +247,7 @@ public class PrimeraParte {
     }
 
     public void codificacionShannonFano() {
+        this.largoArchivoShanonFano=0;
         try (InputStream in = new FileInputStream("tp2_grupo1.txt");
              Reader reader = new InputStreamReader(in)) {
 
@@ -287,7 +289,7 @@ public class PrimeraParte {
                 
                 if (contador == 8) {
                     archivo2.write(bytee);
-                    this.largoArchivoShanonFano +=1; //no se si es correcto
+                    this.largoArchivoShanonFano +=1; 
                     contador = 0;
                     bytee = 0;
                 }
@@ -399,10 +401,9 @@ public class PrimeraParte {
                     arrayIzq.add(arrayEntrada.get(i));
                     probabilidadIzq += probabilidad;
                 }
-                //al meter la entrada en el grupo menor este tendría mas del 50% de probabilidad
+               
                 else 
                 {
-                    //Si al agregar la ultima entrada al grupo menor quedaria mas cerca de 50/50, agregarla. Caso contrario, se corta y pasa el resto al grupo derecho        
                     if (Math.abs(probabilidadIzq + probabilidad - (float)probabilidadTotal / 2) < Math.abs(probabilidadIzq - (float)probabilidadTotal / 2)) 
                     {
                        arrayIzq.add(arrayEntrada.get(i));
@@ -421,7 +422,6 @@ public class PrimeraParte {
             }
             proceso(arrayIzq,codigo+"0");
             proceso(arrayDer,codigo+"1");
-
 
         }else{
             if (arrayEntrada.size() == 1){
