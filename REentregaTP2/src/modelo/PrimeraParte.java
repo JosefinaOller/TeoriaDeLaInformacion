@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +15,9 @@ import java.io.Reader;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 
 import java.util.ArrayList;
@@ -37,25 +38,25 @@ public class PrimeraParte {
     private HashMap<String, Double> probabilidades = new HashMap<String, Double>();
     private LinkedHashMap<String, Double> sortedMap = new LinkedHashMap<>();
     private ArrayList<Double> list = new ArrayList<>();
-    // ArrayList<ElementoShannonFano> datosSF = new
-    // ArrayList<ElementoShannonFano>();
     private HashMap<String, ElementoShannonFano> datosSF = new HashMap<String, ElementoShannonFano>();
     private int total_palabras;
     private HashMap<String, String> codigosHuf = new HashMap<String, String>();
     private HashMap<String, String> codigosSF = new HashMap<String, String>();
     private HashMap<String, Double> informacionHuffman = new HashMap<String, Double>();
     private String[] datos = new String[17000];
-    private int largoArchivoOriginal;
-    private int largoArchivoHuffman;
-    private int largoArchivoShanonFano;
+    private long largoArchivoOriginal;
+    private long largoArchivoHuffman;
+    private long largoArchivoShanonFano;
     static DecimalFormat df = new DecimalFormat("#.########");
 
     public void leeArchivo() {
+    	Path path = Paths.get("tp2_grupo1.txt"); //para el largo original del archivo
         File arch = new File("tp2_grupo1.txt");
         Charset.forName("UTF-8").newDecoder();
         try {
             char letra;
             this.total_palabras = 0;
+            this.largoArchivoOriginal=Files.size(path);
             try (BufferedReader lector =
                  new BufferedReader(new InputStreamReader(new FileInputStream(arch), StandardCharsets.UTF_8))) {
                 String palabra = "";
@@ -75,16 +76,9 @@ public class PrimeraParte {
                             datos[i] = palabra;
                             i++;
                         }
-                        /*if ((letra == '\n' || letra == '\r') && datos[i - 1] != "\n") {
-							//datos[i] = "\n";
-							i++;
-						}*/
                         palabra = "";
                     }
                 }
-                this.largoArchivoOriginal = i;
-                System.out.println("apariciones: " + this.apariciones.toString());
-                System.out.println(datos[0]);
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error de lectura de archivo");
@@ -92,8 +86,6 @@ public class PrimeraParte {
     }
 
     public void procesamiento() {
-
-        // System.out.println(sortedMap);
 
         for (String i : this.apariciones.keySet()) {
             this.probabilidades.put(i, (double) (this.apariciones.get(i)) / this.total_palabras);
@@ -110,15 +102,16 @@ public class PrimeraParte {
                 }
             }
         }
-        // System.out.println("probabilidades: " + this.sortedMap.toString());
     }
 
     public void huffman() {
         ArrayList<NodoArbol> aux = new ArrayList<NodoArbol>();
         ArrayList<NodoArbol> aux2 = new ArrayList<NodoArbol>();
-        // Genero una lista de probabilidades y la ordeno
+        // Genero una lista de probabilidades y la ordeno, esta mal, ordena de forma ascendente, tiene que ser descendente
+        
         List<Entry<String, Double>> list = new ArrayList<>(probabilidades.entrySet());
         list.sort(Entry.comparingByValue());
+        
         for (int i = 0; i < list.size(); i++) {
             aux.add(new NodoArbol(list.get(i).getKey(), list.get(i).getValue(), null, null));
             aux2.add(new NodoArbol(list.get(i).getKey(), list.get(i).getValue(), null, null));
@@ -151,9 +144,7 @@ public class PrimeraParte {
             }
         }
         recorrido(aux2.get(0));
-        // System.out.println("Codigos de cada palabra\n" + this.codigosHuf.toString());
 
-        //this.generarArchivoHuffman();
         this.codificacionHuffman();
         this.decodificacion("huf");
         double entropiaHuffman = entropia(this.codigosHuf);
@@ -237,6 +228,7 @@ public class PrimeraParte {
                 
                 if (contador == 8) {
                     archivo2.write(bytee);
+                    this.largoArchivoHuffman += 1; //no se si es correcto
                     contador = 0;
                     bytee = 0;
                 }
@@ -253,39 +245,63 @@ public class PrimeraParte {
         }
     }
 
+    public void codificacionShannonFano() {
+        try (InputStream in = new FileInputStream("tp2_grupo1.txt");
+             Reader reader = new InputStreamReader(in)) {
 
-    private void generarArchivoHuffman() {
-        try {
-            this.largoArchivoHuffman = 0;
-            FileWriter myWriter = new FileWriter("tp2_grupo1.huf");
-            this.codigosHuf.forEach((palabra, codigo) -> {
-                try {
-                    myWriter.write(palabra + ">" + codigo + "\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
+            File archivo = new File("sfCodificado.fan");
+            FileOutputStream archivo2 = new FileOutputStream(archivo);
+            ObjectOutputStream escribir = new ObjectOutputStream(archivo2);
+            escribir.writeObject(this.codigosSF);
+
+            ArrayList<Boolean> valoresEnBits = new ArrayList<Boolean>();
+            System.out.println("\nf" + this.datos);
+            for (String palabra : this.datos) {
+
+                String codigosf = this.codigosSF.get(palabra);
+                if (codigosf != null) {
+                    System.out.println(palabra);
+                    System.out.println("l" + codigosf);
+                    for (char c : codigosf.toCharArray()) {
+                        if (c == '0') {
+                            valoresEnBits.add(false);
+                        } else {
+                            valoresEnBits.add(true);
+                        }
+                    }
+                    palabra = "";
                 }
 
-            });
-            myWriter.write("|-------FIN DICCIONARIO-------\n");
-            for (String palabra : this.datos) {
-                if (palabra != null) {
-                    if (palabra.equals("\n"))
-                        myWriter.write('\n');
-                    else {
-                        myWriter.write(this.codigosHuf.get(palabra) + " ");
-                        this.largoArchivoHuffman += (this.codigosHuf
-                                                         .get(palabra)
-                                                         .length() + 1);
-                    }
+            }
+
+            byte bytee = 0;
+            int contador = 0;
+            Iterator valoresIterator = valoresEnBits.iterator();
+            while (valoresIterator.hasNext()) {
+                boolean valor = (Boolean) valoresIterator.next();
+              
+                if (valor) {
+                    bytee = (byte) (bytee | (1 << 7 - contador));
+                }
+                contador++;
+                
+                if (contador == 8) {
+                    archivo2.write(bytee);
+                    this.largoArchivoShanonFano +=1; //no se si es correcto
+                    contador = 0;
+                    bytee = 0;
                 }
             }
-            myWriter.close();
+            if (contador < 0) 
+            {
+                archivo2.write(bytee);
+            }
+            escribir.close();
+            archivo2.close();
 
         } catch (IOException e) {
-
             e.printStackTrace();
         }
-
     }
 
     private double entropia(HashMap<String, String> codigos) {
@@ -304,61 +320,28 @@ public class PrimeraParte {
 
         return longitud_media;
     }
-
-    private void generarArchivoShannonFano() {
-        try {
-            this.largoArchivoShanonFano = 0;
-            FileWriter myWriter = new FileWriter("tp2_grupo1.fan");
-            this.codigosSF.forEach((palabra, codigo) -> {
-                try {
-                    myWriter.write(palabra + ">" + codigo + '\n');
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            });
-            myWriter.write("|-------FIN DICCIONARIO-------\n");
-            for (String palabra : this.datos) {
-                if (palabra != null) {
-                    if (palabra.equals("\n"))
-                        myWriter.write('\n');
-                    else {
-                        myWriter.write(this.codigosSF.get(palabra) + " ");
-                        this.largoArchivoShanonFano += (this.codigosSF
-                                                            .get(palabra)
-                                                            .length() + 1);
-                    }
-                }
-            }
-            myWriter.close();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-
-    }
-
+    
     public void ShannonFano() {
-
-        // ArrayList<ElementoShannonFano> auxSF2 = new ArrayList<ElementoShannonFano>();
-
         // Genero una lista de probabilidades y la ordeno
         List<Entry<String, Double>> list = new ArrayList<>(probabilidades.entrySet());
         list.sort(Entry.comparingByValue());
-        System.out.println(list.size());
+        
+        ArrayList<Double> prob = new ArrayList<Double>();
+        
         for (int i = 0; i < list.size(); i++) {
-            datosSF.put(list.get(i).getKey(), new ElementoShannonFano(list.get(i).getKey(), list.get(i).getValue()));
-        }
-
+        	datosSF.put(list.get(i).getKey(), new ElementoShannonFano(list.get(i).getKey(), list.get(i).getValue()));
+            prob.add(list.get(i).getValue());
+        } 
         try {
             FileWriter myWriter = new FileWriter("datosShannonFano.txt");
             Collection<ElementoShannonFano> values = datosSF.values();
 
             // Creating an ArrayList of values
             ArrayList<ElementoShannonFano> arraySF = new ArrayList<>(values);
-            this.recorrido(arraySF);
-
+            
+            //Genera codigos de Shannon-Fano
+            this.proceso(arraySF, prob,prob.size(),0);
+            
             for (ElementoShannonFano dato : this.datosSF.values()) {
 
                 myWriter.write(dato.toString());
@@ -369,7 +352,9 @@ public class PrimeraParte {
                 this.codigosSF.put(dato.getClave(), dato.getCodigo());
             }
             myWriter.close();
-            generarArchivoShannonFano();
+            
+            this.codificacionShannonFano();
+            this.decodificacion("fan");
 
             double entropiaShannonFano = entropia(this.codigosSF);
             double longitudMediaShannonFanon = longitudMedia(this.codigosSF);
@@ -392,100 +377,58 @@ public class PrimeraParte {
 
     }
 
+    private void proceso(ArrayList<ElementoShannonFano> arraySF, ArrayList<Double> probs, int size, int posInicio) {
+    	ArrayList<Double> probs1 = new ArrayList<Double>();
+    	ArrayList<Double> probs2 = new ArrayList<Double>();
+    	int puntoMedio = puntoMedio(probs,size);
+    	ElementoShannonFano elemento;
+    	
+    	for (int i= 0; i < puntoMedio; i++) {
+    		probs1.add(probs.get(i));
+    		elemento = arraySF.get(posInicio+i);
+    		elemento.setCodigo(elemento.getCodigo() + "1");
+    		arraySF.set(posInicio + i, elemento);
+    	}
+    	for(int i=puntoMedio; i<size;i++) {
+    		probs2.add(probs.get(i));
+    		elemento = arraySF.get(posInicio+i);
+    		elemento.setCodigo(elemento.getCodigo() + "0");
+    		arraySF.set(posInicio + i, elemento);
+    	}
+    	if(probs1.size() > 1)
+    		proceso(arraySF,probs1,probs1.size(),posInicio);
+    	if(probs2.size() > 1)
+    		proceso(arraySF,probs2,probs2.size(),posInicio + puntoMedio);
+    	return;
+		
+		
+	}
+
+	private int puntoMedio(ArrayList<Double> probs, int size) {
+		int medio;
+		double primeraSuma, segundaSuma, resultadoAnterior;
+		
+		primeraSuma = probs.get(0);
+		segundaSuma = 0;
+		for (int i=1; i<size; i++)
+			segundaSuma += probs.get(i);
+		medio = 1;
+		
+		do {
+			medio++;
+			resultadoAnterior= Math.abs(primeraSuma - segundaSuma);
+			primeraSuma=0;
+			segundaSuma=0;
+			for(int i=0; i < medio; i++)
+				primeraSuma +=probs.get(i);
+			for(int j=medio; j<size;j++)
+				segundaSuma +=probs.get(j);
+		} while (Math.abs(primeraSuma - segundaSuma) <= resultadoAnterior );
+		return (int) Math.ceil(medio - 1);
+	}
+
     @SuppressWarnings("unchecked")
-    private void recorrido(ArrayList<ElementoShannonFano> arraySF) {
-        double diff, min = 1.0;
-
-        // System.out.println(arraySF.size());
-        // System.out.println(arraySF.size());
-        ElementoShannonFano elementSF, elementSF2;
-        ArrayList<ElementoShannonFano> conjunto1 = new ArrayList<ElementoShannonFano>();
-
-        ArrayList<ElementoShannonFano> conjunto2 = new ArrayList<ElementoShannonFano>();
-
-        if (arraySF != null && arraySF.size() > 1) {
-
-            if (arraySF.size() == 2) {
-                if (arraySF.get(0).getProbabilidad() > arraySF.get(1).getProbabilidad()) {
-                    anadirCodigo(arraySF.get(0).getClave(), "1");
-                    anadirCodigo(arraySF.get(1).getClave(), "0");
-                } else {
-                    anadirCodigo(arraySF.get(0).getClave(), "0");
-                    anadirCodigo(arraySF.get(1).getClave(), "1");
-                }
-            } else {
-                if (arraySF.size() == 3) {
-                    ArrayList<ElementoShannonFano> auxSF = (ArrayList<ElementoShannonFano>) arraySF.clone();
-                    ArrayList<ElementoShannonFano> auxSF2 = new ArrayList<ElementoShannonFano>();
-
-                    for (int i = 0; i < arraySF.size(); i++) {
-
-                        elementSF = (ElementoShannonFano) auxSF.get(i);
-                        auxSF2.add(auxSF.get(i));
-                        auxSF.remove(elementSF);
-
-                        for (int j = 0; j < auxSF.size(); j++) {
-
-                            elementSF2 = (ElementoShannonFano) auxSF.get(j);
-                            auxSF2.add(elementSF2);
-                            auxSF.remove(elementSF2);
-
-                            diff = sumatoria(auxSF) - sumatoria(auxSF2);
-                            if (sumatoria(auxSF) - sumatoria(auxSF2) < min) {
-                                min = diff;
-                                conjunto1 = (ArrayList<ElementoShannonFano>) auxSF.clone();
-                                conjunto2 = (ArrayList<ElementoShannonFano>) auxSF2.clone();
-
-                            }
-                            auxSF2.remove(elementSF2);
-                            auxSF.add(j, elementSF2);
-
-                        }
-                        auxSF2.remove(elementSF);
-                        auxSF.add(i, elementSF);
-
-                    }
-
-                } else {
-                    ArrayList<ElementoShannonFano> auxSF = (ArrayList<ElementoShannonFano>) arraySF.clone();
-                    conjunto1 = (ArrayList<ElementoShannonFano>) auxSF.clone();
-                    for (int i = 0; i < 2; i++) {
-                        elementSF = conjunto1.get(conjunto1.size() - 1);
-
-                        conjunto2.add(elementSF);
-                        conjunto1.remove(elementSF);
-                    }
-
-                }
-                // System.out.println(conjunto1.size());
-                conjunto2.forEach((elemento) -> {
-                                  // System.out.println(elemento);
-                                  anadirCodigo(elemento.getClave(), "1"); });
-                conjunto1.forEach((elemento) -> { anadirCodigo(elemento.getClave(), "0"); });
-
-                recorrido(conjunto2);
-                recorrido(conjunto1);
-
-            }
-        }
-    }
-
-    private void anadirCodigo(String clave, String valor) {
-
-        ElementoShannonFano elemento = datosSF.get(clave);
-
-        elemento.setCodigo(elemento.getCodigo() + valor);
-    }
-
-    private double sumatoria(ArrayList<ElementoShannonFano> arraySF) {
-        double sum = 0;
-        for (int i = 0; i < arraySF.size(); i++) {
-            sum += arraySF.get(i).getProbabilidad();
-        }
-        return sum;
-    }
-
-    public void decodificacion(String tipo) {
+	public void decodificacion(String tipo) {
         File archivo;
         if(tipo.equals("huf"))
             archivo = new File("hufCodificado.huf");
@@ -579,7 +522,6 @@ public class PrimeraParte {
                  new BufferedReader(new InputStreamReader(new FileInputStream(arch), StandardCharsets.UTF_8))) {
                 String codigo = "";
                 String palabra = "";
-                int i = 0;
                 while ((letra = (char) lector.read()) != 65535) {
 
                     if (!finDiccionario) {
@@ -624,5 +566,5 @@ public class PrimeraParte {
             JOptionPane.showMessageDialog(null, "Error de lectura de archivo");
         }
     }
-
+    
 }
