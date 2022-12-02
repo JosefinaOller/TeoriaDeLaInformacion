@@ -340,7 +340,8 @@ public class PrimeraParte {
             ArrayList<ElementoShannonFano> arraySF = new ArrayList<>(values);
             
             //Genera codigos de Shannon-Fano
-            this.proceso(arraySF, prob,prob.size(),0);
+            //this.proceso(arraySF, prob,prob.size(),0);
+            this.proceso(arraySF,"");
             
             for (ElementoShannonFano dato : this.datosSF.values()) {
 
@@ -377,7 +378,65 @@ public class PrimeraParte {
 
     }
 
-    private void proceso(ArrayList<ElementoShannonFano> arraySF, ArrayList<Double> probs, int size, int posInicio) {
+     private void proceso(ArrayList<ElementoShannonFano> arrayEntrada,String codigo) {
+        if (arrayEntrada.size() > 2){
+            ArrayList<ElementoShannonFano> arrayIzq = new ArrayList<ElementoShannonFano>();
+            ArrayList<ElementoShannonFano> arrayDer = new ArrayList<ElementoShannonFano>();
+            double probabilidadTotal=0.0f,probabilidadIzq=0.0f;
+
+            int i=0;
+            while(i<arrayEntrada.size()){
+                probabilidadTotal += arrayEntrada.get(i).getProbabilidad();
+                i++;
+            }
+            i=0;
+            boolean ladoIzquierdo=true;
+            while(i<arrayEntrada.size() &&  ladoIzquierdo){
+                
+                Double probabilidad = arrayEntrada.get(i).getProbabilidad();
+                if (probabilidadIzq + probabilidad < (float)probabilidadTotal / 2) 
+                {
+                    arrayIzq.add(arrayEntrada.get(i));
+                    probabilidadIzq += probabilidad;
+                }
+                //al meter la entrada en el grupo menor este tendría mas del 50% de probabilidad
+                else 
+                {
+                    //Si al agregar la ultima entrada al grupo menor quedaria mas cerca de 50/50, agregarla. Caso contrario, se corta y pasa el resto al grupo derecho        
+                    if (Math.abs(probabilidadIzq + probabilidad - (float)probabilidadTotal / 2) < Math.abs(probabilidadIzq - (float)probabilidadTotal / 2)) 
+                    {
+                       arrayIzq.add(arrayEntrada.get(i));
+                    }
+                    else 
+                    {
+                        arrayDer.add(arrayEntrada.get(i));
+                    }
+                    ladoIzquierdo=false;
+                }
+                i++;
+            }
+            while(i<arrayEntrada.size()){
+                arrayDer.add(arrayEntrada.get(i));
+                i++;
+            }
+            proceso(arrayIzq,codigo+"0");
+            proceso(arrayDer,codigo+"1");
+
+
+        }else{
+            if (arrayEntrada.size() == 1){
+                this.datosSF.get(arrayEntrada.get(0).getClave()).setCodigo(codigo);
+            }
+            else{
+                this.datosSF.get(arrayEntrada.get(0).getClave()).setCodigo(codigo+"0");
+                this.datosSF.get(arrayEntrada.get(1).getClave()).setCodigo(codigo+"1");
+            }
+        }
+     }
+
+
+
+   /*  private void proceso(ArrayList<ElementoShannonFano> arraySF, ArrayList<Double> probs, int size, int posInicio) {
     	ArrayList<Double> probs1 = new ArrayList<Double>();
     	ArrayList<Double> probs2 = new ArrayList<Double>();
     	int puntoMedio = puntoMedio(probs,size);
@@ -425,7 +484,7 @@ public class PrimeraParte {
 				segundaSuma +=probs.get(j);
 		} while (Math.abs(primeraSuma - segundaSuma) <= resultadoAnterior );
 		return (int) Math.ceil(medio - 1);
-	}
+	} */
 
     @SuppressWarnings("unchecked")
 	public void decodificacion(String tipo) {
