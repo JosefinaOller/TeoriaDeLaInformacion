@@ -42,7 +42,7 @@ public class PrimeraParte {
     private int total_palabras;
     private HashMap<String, String> codigosHuf = new HashMap<String, String>();
     private HashMap<String, String> codigosSF = new HashMap<String, String>();
-    private HashMap<String, Double> informacionHuffman = new HashMap<String, Double>();
+    private HashMap<String, Double> informacion = new HashMap<String, Double>();
     private String[] datos = new String[17000];
     private long largoArchivoOriginal;
     private long largoArchivoHuffman;
@@ -154,7 +154,7 @@ public class PrimeraParte {
 
         JOptionPane.showMessageDialog(null,
                                       String.format("<html><body width='%1s'>Entrop\u00eda: " +
-                                                    df.format(entropiaHuffman) + "<p>Longitud Media: " +
+                                                    entropiaHuffman + "<p>Longitud Media: " +
                                                     df.format(longitudMediaHuffman) + "</p><p>Rendimiento: " +
                                                     df.format(rendimiento) + "</p><p>Redundancia: " +
                                                     df.format(1.0 - rendimiento) + "</p><p>Largo archivo original: " +
@@ -309,8 +309,8 @@ public class PrimeraParte {
     private double entropia(HashMap<String, String> codigos) {
         double entropia = 0;
         for (String i : codigos.keySet()) {
-            this.informacionHuffman.put(i, (Math.log(1.0 / this.probabilidades.get(i)) / Math.log(2)));
-            entropia += this.probabilidades.get(i) * this.informacionHuffman.get(i);
+            this.informacion.put(i, (Math.log(1.0 / this.probabilidades.get(i)) / Math.log(2)));
+            entropia += this.probabilidades.get(i) * this.informacion.get(i);
         }
         return entropia;
     }
@@ -350,7 +350,6 @@ public class PrimeraParte {
                 myWriter.write(dato.toString());
                 myWriter.write("\n");
 
-                System.out.println(dato);
 
                 this.codigosSF.put(dato.getClave(), dato.getCodigo());
             }
@@ -366,7 +365,7 @@ public class PrimeraParte {
 
             JOptionPane.showMessageDialog(null,
                                           String.format("<html><body width='%1s'>Datos Shanon-Fano<p>Entrop\u00eda: " +
-                                                        df.format(entropiaShannonFano) + "</p><p>Longitud Media: " +
+                                                        entropiaShannonFano + "</p><p>Longitud Media: " +
                                                         df.format(longitudMediaShannonFanon) + "</p><p>Rendimiento: " +
                                                         df.format(rendimiento) + "</p><p>Redundancia: " +
                                                         df.format(1.0 - rendimiento) +
@@ -433,58 +432,6 @@ public class PrimeraParte {
             }
         }
      }
-
-
-
-   /*  private void proceso(ArrayList<ElementoShannonFano> arraySF, ArrayList<Double> probs, int size, int posInicio) {
-    	ArrayList<Double> probs1 = new ArrayList<Double>();
-    	ArrayList<Double> probs2 = new ArrayList<Double>();
-    	int puntoMedio = puntoMedio(probs,size);
-    	ElementoShannonFano elemento;
-    	
-    	for (int i= 0; i < puntoMedio; i++) {
-    		probs1.add(probs.get(i));
-    		elemento = arraySF.get(posInicio+i);
-    		elemento.setCodigo(elemento.getCodigo() + "1");
-    		arraySF.set(posInicio + i, elemento);
-    	}
-    	for(int i=puntoMedio; i<size;i++) {
-    		probs2.add(probs.get(i));
-    		elemento = arraySF.get(posInicio+i);
-    		elemento.setCodigo(elemento.getCodigo() + "0");
-    		arraySF.set(posInicio + i, elemento);
-    	}
-    	if(probs1.size() > 1)
-    		proceso(arraySF,probs1,probs1.size(),posInicio);
-    	if(probs2.size() > 1)
-    		proceso(arraySF,probs2,probs2.size(),posInicio + puntoMedio);
-    	return;
-		
-		
-	}
-
-	private int puntoMedio(ArrayList<Double> probs, int size) {
-		int medio;
-		double primeraSuma, segundaSuma, resultadoAnterior;
-		
-		primeraSuma = probs.get(0);
-		segundaSuma = 0;
-		for (int i=1; i<size; i++)
-			segundaSuma += probs.get(i);
-		medio = 1;
-		
-		do {
-			medio++;
-			resultadoAnterior= Math.abs(primeraSuma - segundaSuma);
-			primeraSuma=0;
-			segundaSuma=0;
-			for(int i=0; i < medio; i++)
-				primeraSuma +=probs.get(i);
-			for(int j=medio; j<size;j++)
-				segundaSuma +=probs.get(j);
-		} while (Math.abs(primeraSuma - segundaSuma) <= resultadoAnterior );
-		return (int) Math.ceil(medio - 1);
-	} */
 
     @SuppressWarnings("unchecked")
 	public void decodificacion(String tipo) {
@@ -564,66 +511,5 @@ public class PrimeraParte {
 
 
 
-    public void descomprimirArchivo(String archivoADescomprimir, String nombreArchivoDescompirimido) {
-        boolean finDiccionario = false;
-        boolean inicioArchivo = false;
-        boolean lecturaPalabra = true;
-        HashMap<String, String> palabras = new HashMap<String, String>();
-        File arch = new File(archivoADescomprimir);
-
-        Charset.forName("UTF-8").newDecoder();
-        try {
-
-            char letra;
-            this.total_palabras = 0;
-            FileWriter myWriter = new FileWriter(nombreArchivoDescompirimido);
-            try (BufferedReader lector =
-                 new BufferedReader(new InputStreamReader(new FileInputStream(arch), StandardCharsets.UTF_8))) {
-                String codigo = "";
-                String palabra = "";
-                while ((letra = (char) lector.read()) != 65535) {
-
-                    if (!finDiccionario) {
-
-                        if (lecturaPalabra) {
-                            if (letra == '|')
-                                finDiccionario = true;
-                            else if (letra == '>')
-                                lecturaPalabra = false;
-                            else
-                                palabra += letra;
-
-                        } else {
-                            if (letra == '\n') {
-                                palabras.put(codigo, palabra);
-                                codigo = "";
-                                palabra = "";
-                                lecturaPalabra = true;
-                            } else {
-                                codigo += letra;
-                            }
-                        }
-                    }
-
-                    if (inicioArchivo) {
-                        if (letra == ' ') {
-                            myWriter.write(palabras.get(codigo) + " ");
-                            codigo = "";
-                        } else if (letra != '\n') {
-                            codigo += letra;
-                        } else {
-                            myWriter.write('\n');
-                            codigo = "";
-                        }
-                    } else if (finDiccionario && letra == '\n') {
-                        inicioArchivo = true;
-                    }
-                }
-                myWriter.close();
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error de lectura de archivo");
-        }
-    }
     
 }
