@@ -108,7 +108,7 @@ public class PrimeraParte {
     public void huffman() {
         ArrayList<NodoArbol> aux = new ArrayList<NodoArbol>();
         ArrayList<NodoArbol> aux2 = new ArrayList<NodoArbol>();
-        // Genero una lista de probabilidades y la ordeno, esta mal, ordena de forma ascendente, tiene que ser descendente
+        // Genero una lista de probabilidades y la ordeno
         
         List<Entry<String, Double>> list = new ArrayList<>(probabilidades.entrySet());
         list.sort(Entry.comparingByValue(Comparator.reverseOrder()));
@@ -239,6 +239,9 @@ public class PrimeraParte {
             {
                 archivo2.write(bytee);
             }
+            for (String key: this.apariciones.keySet()) {
+            	this.largoArchivoHuffman += key.length();
+            }
             escribir.close();
             archivo2.close();
 
@@ -299,6 +302,9 @@ public class PrimeraParte {
             {
                 archivo2.write(bytee);
             }
+            for (String key: this.apariciones.keySet()) {
+            	this.largoArchivoShanonFano += key.length();
+            }
             escribir.close();
             archivo2.close();
 
@@ -329,11 +335,8 @@ public class PrimeraParte {
         List<Entry<String, Double>> list = new ArrayList<>(probabilidades.entrySet());
         list.sort(Entry.comparingByValue());
         
-        ArrayList<Double> prob = new ArrayList<Double>();
-        
         for (int i = 0; i < list.size(); i++) {
         	datosSF.put(list.get(i).getKey(), new ElementoShannonFano(list.get(i).getKey(), list.get(i).getValue()));
-            prob.add(list.get(i).getValue());
         } 
         try {
             FileWriter myWriter = new FileWriter("datosShannonFano.txt");
@@ -343,7 +346,6 @@ public class PrimeraParte {
             ArrayList<ElementoShannonFano> arraySF = new ArrayList<>(values);
             
             //Genera codigos de Shannon-Fano
-            //this.proceso(arraySF, prob,prob.size(),0);
             this.proceso(arraySF,"");
             
             for (ElementoShannonFano dato : this.datosSF.values()) {
